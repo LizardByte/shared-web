@@ -1,0 +1,13 @@
+# Ignore JetBrains IDE files
+.idea/
+
+# Ignore node_modules
+node_modules/
+package-lock.json
+
+# Ignore test coverage
+junit.xml
+coverage/
+
+# Ignore build artifacts
+dist/
