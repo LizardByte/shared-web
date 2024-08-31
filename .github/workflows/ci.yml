@@ -102,8 +102,14 @@ jobs:
           node-version: latest
           registry-url: https://npm.pkg.github.com/
 
+      - name: Configure git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
       - name: Update package.json
-        run: npm version ${{ needs.setup_release.outputs.release_version }} --no-git-tag-version
+        run: |
+          npm version ${{ needs.setup_release.outputs.release_version }}
 
       - name: Install dependencies
         run: npm install
@@ -113,8 +119,6 @@ jobs:
 
       - name: Commit
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           git add .
           git commit -m "Release ${{ needs.setup_release.outputs.release_version }}"
 
