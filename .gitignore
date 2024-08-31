@@ -11,3 +11,4 @@ coverage/
 
 # Ignore build artifacts
 dist/
+lizardbyte-shared-web*.tgz
