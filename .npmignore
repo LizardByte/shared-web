@@ -1,0 +1,13 @@
+# Ignore JetBrains IDE files
+.idea/
+
+# Ignore node_modules
+node_modules/
+package.json
+package-lock.json
+
+# Ignore test coverage
+junit.xml
+coverage/
+
+# this file must not have dist or it will not be published

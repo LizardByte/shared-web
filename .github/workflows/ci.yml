@@ -111,7 +111,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Commit
+        run: |
+          git add .
+          git commit -m "Release ${{ needs.setup_release.outputs.release_version }}"
+
       - name: Publish
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

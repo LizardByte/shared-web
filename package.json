@@ -1,6 +1,8 @@
 {
   "name": "@lizardbyte/shared-web",
-  "repository": "https://github.com/LizardByte/shared-web.git",
+  "repository": {
+    "url": "git+https://github.com/LizardByte/shared-web.git"
+  },
   "version": "0.0.0",
   "description": "Shared web assets for LizardByte projects",
   "files": [
