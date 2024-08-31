@@ -11,14 +11,10 @@ Common web assets for use in LizardByte projects.
 ## Installation
 1. Add a `.npmrc` file to the root of your project with the following line:
    ```
-   @LizardByte:registry=https://npm.pkg.github.com
+   @lizardbyte:registry=https://npm.pkg.github.com
    ```
 
 2. Add the dependency to your package.json file:
-   ```json
-   {
-     "dependencies": {
-       "LizardByte/shared-web": "latest"
-     }
-   }
+   ```bash
+   npm install LizardByte/shared-web
    ```
