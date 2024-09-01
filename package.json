@@ -47,9 +47,6 @@
     ],
     "testEnvironment": "jsdom"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
     "start": "webpack serve",
