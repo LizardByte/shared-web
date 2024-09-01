@@ -1,4 +1,5 @@
 const path = require('path');
+const { codecovWebpackPlugin } = require("@codecov/webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 let production = process.env.NODE_ENV === 'production';
@@ -74,6 +75,12 @@ let config = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: '[name].css',
+        }),
+        // Put the Codecov webpack plugin after all other plugins
+        codecovWebpackPlugin({
+          enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+          bundleName: "shared-web",
+          uploadToken: process.env.CODECOV_TOKEN,
         }),
     ],
     resolve: {
