@@ -10,20 +10,26 @@ function randomQuote(quote, crate) {
     crate.notify(the_quote);
 }
 
-// Widgetbot initialization
-loadScript('https://cdn.jsdelivr.net/npm/@widgetbot/crate@3', function() {
-    let widgetbot = new Crate({
-        server: '804382334370578482',
-        channel: '804383092822900797',
-        defer: false,
-    });
+function initDiscord() {
+    loadScript('https://cdn.jsdelivr.net/npm/@widgetbot/crate@3', function() {
+        let widgetbot = new Crate({
+            server: '804382334370578482',
+            channel: '804383092822900797',
+            defer: false,
+        });
 
-    // get random video game quotes and notify the user on Widgetbot after 7 minutes
-    fetchRandomQuote().then(quote => {
-        setTimeout(() => {
-            if (widgetbot) {
-                randomQuote(quote, widgetbot);
-            }
-        }, 7 * 60 * 1000);
+        // get random video game quotes and notify the user on Widgetbot after 7 minutes
+        fetchRandomQuote().then(quote => {
+            setTimeout(() => {
+                if (widgetbot) {
+                    randomQuote(quote, widgetbot);
+                }
+            }, 7 * 60 * 1000);
+        });
     });
-});
+}
+
+module.exports = {
+    initDiscord,
+    randomQuote,
+};
