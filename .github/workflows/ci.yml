@@ -54,6 +54,8 @@ jobs:
           npm test
 
       - name: Build
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: npm run build
 
       - name: Upload test results to Codecov
