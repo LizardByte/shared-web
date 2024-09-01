@@ -5,6 +5,7 @@
   },
   "version": "0.0.0",
   "description": "Shared web assets for LizardByte projects",
+  "license": "AGPL-3.0-only",
   "files": [
     "dist/",
     "src/",
