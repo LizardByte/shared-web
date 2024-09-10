@@ -33,4 +33,9 @@ function levenshteinDistance(a, b) {
     return (1 - (matrix[b.length][a.length] / Math.max(a.length, b.length))) * 100
 }
 
+// Expose to the global scope
+if (typeof window !== 'undefined') {
+    window.levenshteinDistance = levenshteinDistance;
+}
+
 module.exports = levenshteinDistance;
