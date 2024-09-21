@@ -9,6 +9,7 @@ let config = {
         'crowdin': './src/js/crowdin',
         'crowdin-web-widget': './src/js/crowdin-web-widget',
         'discord': './src/js/discord',
+        'format-number': './src/js/format-number',
         'levenshtein-distance': './src/js/levenshtein-distance',
         'lizardbyte-css': './src/js/lizardbyte-css',
         'load-script': './src/js/load-script',
