@@ -10,7 +10,7 @@ function formatNumber(num, decimalPlaces = 1) {
     } else if (num >= 1000) {
         return (num / 1000).toFixed(decimalPlaces) + 'k';
     } else {
-        return num.toFixed(decimalPlaces);
+        return num.toString()
     }
 }
 
