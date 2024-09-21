@@ -18,6 +18,15 @@ function initDiscord() {
             defer: false,
         });
 
+        // Apply CSS position change directly in JavaScript
+        const style = document.createElement('style');
+        style.innerHTML = `
+            widgetbot-crate {
+                position: fixed !important;
+            }
+        `;
+        document.head.appendChild(style);
+
         // get random video game quotes and notify the user on Widgetbot after 7 minutes
         fetchRandomQuote().then(quote => {
             setTimeout(() => {
