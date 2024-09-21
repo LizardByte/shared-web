@@ -4,7 +4,7 @@
  * @param secondKey The secondary key to sort by, in case the first key is equal.
  * @returns {(function(*, *): (number))|*} The sorting function.
  */
-let rankingSorter = function (firstKey, secondKey) {
+function rankingSorter(firstKey, secondKey) {
     return function(a, b) {
         if (a[firstKey] > b[firstKey]) {
             return -1;
@@ -21,6 +21,11 @@ let rankingSorter = function (firstKey, secondKey) {
             }
         }
     }
+}
+
+// Expose to the global scope
+if (typeof window !== 'undefined') {
+    window.rankingSorter = rankingSorter;
 }
 
 module.exports = rankingSorter;

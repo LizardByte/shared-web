@@ -7,4 +7,9 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Expose to the global scope
+if (typeof window !== 'undefined') {
+    window.sleep = sleep;
+}
+
 module.exports = sleep;

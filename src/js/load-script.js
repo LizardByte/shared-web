@@ -19,4 +19,9 @@ function loadScript(url, callback) {
     document.head.appendChild(script);
 }
 
+// Expose to the global scope
+if (typeof window !== 'undefined') {
+    window.loadScript = loadScript;
+}
+
 module.exports = loadScript;

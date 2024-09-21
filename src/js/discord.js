@@ -29,6 +29,11 @@ function initDiscord() {
     });
 }
 
+// Expose to the global scope
+if (typeof window !== 'undefined') {
+    window.initDiscord = initDiscord;
+}
+
 module.exports = {
     initDiscord,
     randomQuote,
