@@ -6,7 +6,7 @@
 [![NPM Monthly Downloads](https://img.shields.io/npm/dm/%40lizardbyte%2Fshared-web?style=for-the-badge&logo=npm&label=npm%20downloads/m)](https://www.npmjs.com/package/@lizardbyte/shared-web)
 [![NPM Version](https://img.shields.io/npm/v/%40lizardbyte%2Fshared-web?style=for-the-badge&logo=npm&label=npm%20version)](https://www.npmjs.com/package/@lizardbyte/shared-web)
 [![GitHub Monthly Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2FLizardByte%2Fshared-web%2Fshared-web.json&query=%24.downloads_month&label=github%20downloads/m&style=for-the-badge&logo=github%20actions)](https://github.com/LizardByte/Sunshine/pkgs/npm/shared-web)
-[![GitHub Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2FLizardByte%2Fshared-web%2Fshared-web.json&query=%24.version%5B%3F(%40.latest%3D%3Dtrue)%5D.name&label=gh%20version&style=for-the-badge&logo=github%20actions)](https://github.com/LizardByte/Sunshine/pkgs/npm/shared-web)
+[![GitHub Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2FLizardByte%2Fshared-web%2Fshared-web.json&query=%24.version%5B-1%3A%5D.name&label=gh%20version&style=for-the-badge&logo=github%20actions)](https://github.com/LizardByte/Sunshine/pkgs/npm/shared-web)
 
 Common web assets for use in LizardByte projects.
 

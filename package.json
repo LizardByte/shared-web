@@ -1,11 +1,17 @@
 {
   "name": "@lizardbyte/shared-web",
   "repository": {
+    "type": "git",
     "url": "git+https://github.com/LizardByte/shared-web.git"
   },
   "version": "0.0.0",
   "description": "Shared web assets for LizardByte projects",
   "license": "AGPL-3.0-only",
+  "funding": "https://app.lizardbyte.dev",
+  "homepage": "https://github.com/LizardByte/shared-web#readme",
+  "bugs": {
+    "url": "https://github.com/LizardByte/shared-web/issues"
+  },
   "files": [
     "dist/",
     "src/",
