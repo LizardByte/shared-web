@@ -108,7 +108,7 @@ function initCrowdIn(project = 'LizardByte', platform = 'bootstrap') {
 
 // Expose to the global scope
 if (typeof window !== 'undefined') {
-    window.initDiscord = initCrowdIn;
+    window.initCrowdIn = initCrowdIn;
 }
 
 module.exports = initCrowdIn;
