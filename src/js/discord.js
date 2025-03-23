@@ -5,11 +5,19 @@
 const loadScript = require('./load-script');
 const { fetchRandomQuote } = require('./random-quote');
 
+/**
+ * Notify the user with a random quote.
+ * @param {Object} quote - The quote object.
+ * @param {Crate} crate - The Crate object.
+ */
 function randomQuote(quote, crate) {
     let the_quote = quote['quote_safe'] || quote['quote'];
     crate.notify(the_quote);
 }
 
+/**
+ * Initialize the Discord widget.
+ */
 function initDiscord() {
     loadScript('https://cdn.jsdelivr.net/npm/@widgetbot/crate@3', function() {
         let widgetbot = new Crate({

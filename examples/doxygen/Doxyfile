@@ -1,0 +1,73 @@
+DOXYFILE_ENCODING = UTF-8
+
+# project metadata
+DOCSET_BUNDLE_ID = dev.lizardbyte.shared-web.doxygen
+DOCSET_PUBLISHER_ID = dev.lizardbyte.shared-web.doxygen
+DOCSET_PUBLISHER_NAME = LizardByte
+PROJECT_BRIEF = "Example use of @lizardbyte/shared-web in doxygen html."
+PROJECT_ICON = $(READTHEDOCS_OUTPUT)html/favicon.ico
+PROJECT_LOGO = $(READTHEDOCS_OUTPUT)html/logo.png
+PROJECT_NAME = shared-web Doxygen sample
+
+# doxygen-awesome-css
+HTML_COLORSTYLE = LIGHT  # required with Doxygen >= 1.9.5
+HTML_COLORSTYLE_HUE = 209
+HTML_COLORSTYLE_SAT = 255
+HTML_COLORSTYLE_GAMMA = 113
+HTML_COPY_CLIPBOARD = NO  # required for Doxygen >= 1.10.0
+HTML_EXTRA_FILES = ./node_modules/@jothepro/doxygen-awesome-css/doxygen-awesome-darkmode-toggle.js
+HTML_EXTRA_FILES += ./node_modules/@jothepro/doxygen-awesome-css/doxygen-awesome-fragment-copy-button.js
+HTML_EXTRA_FILES += ./node_modules/@jothepro/doxygen-awesome-css/doxygen-awesome-paragraph-link.js
+HTML_EXTRA_FILES += ./node_modules/@jothepro/doxygen-awesome-css/doxygen-awesome-interactive-toc.js
+HTML_EXTRA_FILES += ./node_modules/@jothepro/doxygen-awesome-css/doxygen-awesome-tabs.js
+HTML_EXTRA_STYLESHEET = ./node_modules/@jothepro/doxygen-awesome-css/doxygen-awesome.css
+HTML_HEADER = header.html
+
+# @lizardbyte/shared-web
+HTML_EXTRA_FILES += ./node_modules/@lizardbyte/shared-web/dist/crowdin.js
+HTML_EXTRA_STYLESHEET += ./node_modules/@lizardbyte/shared-web/dist/crowdin-doxygen-css.css
+
+# general settings
+CASE_SENSE_NAMES = YES
+CREATE_SUBDIRS = NO
+DISABLE_INDEX = NO
+DOCBOOK_OUTPUT = docbook
+DOT_GRAPH_MAX_NODES = 50
+DOT_IMAGE_FORMAT = svg
+EXTRACT_ALL = NO
+FULL_SIDEBAR = NO
+GENERATE_HTML = YES
+GENERATE_LATEX = NO
+GENERATE_TREEVIEW = YES
+GENERATE_XML = NO
+HAVE_DOT = NO
+HTML_OUTPUT = html
+INTERACTIVE_SVG = YES
+LATEX_OUTPUT = latex
+MACRO_EXPANSION = YES
+MAN_OUTPUT = man
+MARKDOWN_ID_STYLE = GITHUB
+MARKDOWN_SUPPORT = YES
+# If DOXYCONFIG_THREADS is not set in the environment, both DOT_NUM_THREADS and
+# NUM_PROC_THREADS will be set to blank. A blank value for either is equivalent
+# to the value of 0, i.e., multithreading will be used.
+DOT_NUM_THREADS = $(DOXYCONFIG_THREADS)
+NUM_PROC_THREADS = $(DOXYCONFIG_THREADS)
+PROJECT_NUMBER = $(READTHEDOCS_VERSION)
+OUTPUT_DIRECTORY = $(READTHEDOCS_OUTPUT)html/doxygen
+RECURSIVE = YES
+RTF_OUTPUT = rtf
+SORT_BRIEF_DOCS = YES
+STRIP_FROM_INC_PATH = ../
+STRIP_FROM_PATH = ../
+WARN_AS_ERROR = FAIL_ON_WARNINGS
+WARN_IF_DOC_ERROR = YES
+WARN_IF_INCOMPLETE_DOC = YES
+WARN_IF_UNDOC_ENUM_VAL = YES
+WARN_IF_UNDOCUMENTED = YES
+WARN_NO_PARAMDOC = YES
+WARNINGS = YES
+XML_OUTPUT = xml
+
+USE_MDFILE_AS_MAINPAGE = sample.md
+INPUT = sample.md

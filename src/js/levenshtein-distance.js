@@ -1,3 +1,9 @@
+/**
+ * Calculate the levenshtein distance between two strings.
+ * @param {string} a - The first string to compare.
+ * @param {string} b - The second string to compare.
+ * @returns {number|*} - The percentage of the levenshtein distance.
+ */
 function levenshteinDistance(a, b) {
     if (a.length === 0) return b.length;
     if (b.length === 0) return a.length;

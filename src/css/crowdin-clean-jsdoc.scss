@@ -1,0 +1,36 @@
+:root {
+  --crowdin-primary-color: #f7f7f7;
+  --crowdin-secondary-color: #565656;
+  --crowdin-primary-text-color: #111111;
+  --crowdin-secondary-text-color: #c5c5c9;
+}
+
+@media (prefers-color-scheme: dark) {
+  body[data-theme="dark"] {
+    --crowdin-primary-color: #222222;
+    --crowdin-secondary-color: #717171;
+    --crowdin-primary-text-color: #ffffff;
+    --crowdin-secondary-text-color: #8b949e;
+  }
+}
+
+#crowdin-language-picker .cr-picker-button,
+#crowdin-language-picker .cr-picker-submenu {
+    background-color: var(--crowdin-primary-color) !important;
+    border: 1px solid var(--crowdin-secondary-color) !important;
+    color: var(--crowdin-primary-text-color) !important;
+}
+
+#crowdin-language-picker .cr-picker-button:hover,
+#crowdin-language-picker .cr-picker-submenu > a:hover {
+  background-color: var(--crowdin-primary-text-color) !important;
+  color: var(--crowdin-primary-color) !important;
+}
+
+#crowdin-language-picker .cr-picker-submenu > a {
+  color: var(--crowdin-primary-text-color) !important;
+}
+
+#crowdin-language-picker .cr-picker-submenu > a.cr-selected {
+  color: var(--crowdin-secondary-text-color) !important;
+}

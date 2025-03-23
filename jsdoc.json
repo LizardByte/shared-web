@@ -1,0 +1,68 @@
+{
+  "source": {
+    "include": ["src", "README.md"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs/build)"
+  },
+  "plugins": ["plugins/markdown"],
+  "opts": {
+    "encoding": "utf8",
+    "readme": "./README.md",
+    "destination": "./_readthedocs/html",
+    "recurse": true,
+    "verbose": true,
+    "template": "node_modules/clean-jsdoc-theme",
+    "theme_opts": {
+      "add_scripts": "window.initCrowdIn('LizardByte-docs', null);",
+      "default_theme": "fallback-dark",
+      "favicon": "favicon.ico",
+      "include_css": ["./dist/crowdin-clean-jsdoc-css.css"],
+      "include_js": ["./dist/crowdin.js"],
+      "menu": [
+        {
+          "title": "Jekyll Sample",
+          "link": "jekyll",
+          "target": "_blank",
+          "class": "",
+          "id": "jekyll-sample"
+        },
+        {
+          "title": "Doxygen Sample",
+          "link": "doxygen/html",
+          "target": "_blank",
+          "class": "",
+          "id": "doxygen-sample"
+        },
+        {
+          "title": "Sphinx Sample",
+          "link": "sphinx/html",
+          "target": "_blank",
+          "class": "",
+          "id": "sphinx-sample"
+        },
+        {
+          "title": "❤ Donate",
+          "link": "https://app.lizardbyte.dev",
+          "target": "_blank",
+          "class": "",
+          "id": "donate"
+        }
+      ]
+    }
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  },
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": false,
+    "default": {
+      "staticFiles": {
+        "include": [
+          "./docs/static"
+        ]
+      }
+    }
+  }
+}

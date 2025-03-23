@@ -1,0 +1,20 @@
+#crowdin-language-picker .cr-picker-button,
+#crowdin-language-picker .cr-picker-submenu {
+  background-color: var(--navbar-col) !important;
+  border: 1px solid var(--navbar-border-col) !important;
+  color: var(--navbar-text-col) !important;
+}
+
+#crowdin-language-picker .cr-picker-button:hover,
+#crowdin-language-picker .cr-picker-submenu > a:hover {
+  background-color: var(--navbar-text-col) !important;
+  color: var(--navbar-col) !important;
+}
+
+#crowdin-language-picker .cr-picker-submenu > a {
+  color: var(--navbar-text-col) !important;
+}
+
+#crowdin-language-picker .cr-picker-submenu > a.cr-selected {
+  color: var(--navbar-border-col) !important;
+}

@@ -7,6 +7,10 @@ let production = process.env.NODE_ENV === 'production';
 let config = {
     entry: {
         'crowdin': './src/js/crowdin',
+        'crowdin-bootstrap-css': './src/js/crowdin-bootstrap-css',
+        'crowdin-clean-jsdoc-css': './src/js/crowdin-clean-jsdoc-css',
+        'crowdin-doxygen-css': './src/js/crowdin-doxygen-css',
+        'crowdin-furo-css': './src/js/crowdin-furo-css',
         'discord': './src/js/discord',
         'format-number': './src/js/format-number',
         'levenshtein-distance': './src/js/levenshtein-distance',

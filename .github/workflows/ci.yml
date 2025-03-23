@@ -94,6 +94,26 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+  release:
+    if: ${{ needs.setup_release.outputs.publish_release == 'true' }}
+    needs:
+      - setup_release
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: action
+        uses: LizardByte/create-release-action@v2025.102.13208
+        with:
+          allowUpdates: false
+          artifacts: ''
+          body: ${{ needs.setup_release.outputs.release_body }}
+          generateReleaseNotes: ${{ needs.setup_release.outputs.release_generate_release_notes }}
+          name: ${{ needs.setup_release.outputs.release_tag }}
+          prerelease: true
+          tag: ${{ needs.setup_release.outputs.release_tag }}
+          token: ${{ secrets.GH_BOT_TOKEN }}
+
   publish-gpr:
     if: ${{ needs.setup_release.outputs.publish_release == 'true' }}
     needs:

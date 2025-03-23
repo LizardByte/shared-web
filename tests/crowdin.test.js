@@ -56,7 +56,7 @@ describe('initCrowdIn', () => {
 
     it('should validate platform parameter', () => {
         initCrowdIn('LizardByte', 'invalidPlatform');
-        expect(console.error).toHaveBeenCalledWith('Invalid UI. Must be "bootstrap", "sphinx", or null');
+        expect(console.error).toHaveBeenCalledWith('Invalid UI. Must be "sphinx", or null');
     });
 
     it('should initialize proxyTranslator with LizardByte settings', () => {
@@ -98,22 +98,6 @@ describe('initCrowdIn', () => {
         // Verify that no styling was applied
         const button = document.getElementsByClassName('cr-picker-button')[0];
         expect(button.classList.contains('btn')).toBe(false);
-    });
-
-    it('should apply bootstrap styling', () => {
-        initCrowdIn('LizardByte', 'bootstrap');
-
-        // Simulate script loading and UI styling timeout
-        jest.runAllTimers();
-
-        const button = document.getElementsByClassName('cr-picker-button')[0];
-        const menu = document.getElementsByClassName('cr-picker-submenu')[0];
-        const selected = document.getElementsByClassName('cr-selected')[0];
-
-        expect(button.classList.contains('btn')).toBe(true);
-        expect(button.classList.contains('btn-outline-light')).toBe(true);
-        expect(menu.classList.contains('bg-dark')).toBe(true);
-        expect(selected.classList.contains('text-white')).toBe(true);
     });
 
     it('should apply sphinx styling', () => {

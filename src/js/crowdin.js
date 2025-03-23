@@ -2,17 +2,17 @@ const loadScript = require('./load-script');
 
 /**
  * Initializes Crowdin translation widget based on project and UI platform.
- * @param {string} project - Project name ('LizardByte' or 'LizardByte-docs')
- * @param {string|null} platform - UI platform ('bootstrap', 'sphinx', or null)
+ * @param {string} project - Project name ('LizardByte' or 'LizardByte-docs').
+ * @param {string|null} platform - UI platform ('sphinx', or null).
  */
-function initCrowdIn(project = 'LizardByte', platform = 'bootstrap') {
+function initCrowdIn(project = 'LizardByte', platform = null) {
     // Input validation
     if (!['LizardByte', 'LizardByte-docs'].includes(project)) {
         console.error('Invalid project. Must be "LizardByte" or "LizardByte-docs"');
         return;
     }
-    if (!['bootstrap', 'sphinx', null].includes(platform)) {
-        console.error('Invalid UI. Must be "bootstrap", "sphinx", or null');
+    if (!['sphinx', null].includes(platform)) {
+        console.error('Invalid UI. Must be "sphinx", or null');
         return;
     }
 
@@ -79,30 +79,23 @@ function initCrowdIn(project = 'LizardByte', platform = 'bootstrap') {
         if (platform === null) {
             return;
         }
-        setTimeout(() => {
-            const container = document.getElementById('crowdin-language-picker');
-            const button = document.getElementsByClassName('cr-picker-button')[0];
-            const menu = document.getElementsByClassName('cr-picker-submenu')[0];
-            const selected = document.getElementsByClassName('cr-selected')[0];
 
-            if (platform === 'bootstrap') {
-                button.classList.add('border-white', 'btn', 'btn-outline-light', 'bg-dark', 'text-white', 'rounded-0');
-                menu.classList.add('border-white', 'bg-dark', 'text-white', 'rounded-0');
-                selected.classList.add('text-white');
-            } else if (platform === 'sphinx') {
-                container.classList.remove('cr-position-bottom-left')
-                container.style.width = button.offsetWidth + 10 + 'px';
-                container.style.position = 'relative';
-                container.style.left = '10px';
-                container.style.bottom = '10px';
+        const container = document.getElementById('crowdin-language-picker');
+        const button = document.getElementsByClassName('cr-picker-button')[0];
 
-                // get rst versions
-                const sidebar = document.getElementsByClassName('sidebar-sticky')[0];
+        if (platform === 'sphinx') {
+            container.classList.remove('cr-position-bottom-left')
+            container.style.width = button.offsetWidth + 10 + 'px';
+            container.style.position = 'relative';
+            container.style.left = '10px';
+            container.style.bottom = '10px';
 
-                // move button to related pages
-                sidebar.appendChild(container);
-            }
-        }, 500); // Short delay to ensure elements are available
+            // get rst versions
+            const sidebar = document.getElementsByClassName('sidebar-sticky')[0];
+
+            // move button to related pages
+            sidebar.appendChild(container);
+        }
     });
 }
 

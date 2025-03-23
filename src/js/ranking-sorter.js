@@ -1,8 +1,8 @@
 /**
  * Sorts an array of objects by two keys in descending order.
- * @param firstKey The primary key to sort by.
- * @param secondKey The secondary key to sort by, in case the first key is equal.
- * @returns {(function(*, *): (number))|*} The sorting function.
+ * @param {string} firstKey The primary key to sort by.
+ * @param {string} secondKey The secondary key to sort by, in case the first key is equal.
+ * @returns {Function} The sorting function that returns a number.
  */
 function rankingSorter(firstKey, secondKey) {
     return function(a, b) {

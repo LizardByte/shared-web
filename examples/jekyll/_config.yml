@@ -1,0 +1,51 @@
+---
+# See https://github.com/daattali/beautiful-jekyll/blob/master/_config.yml for documented options
+
+remote_theme: ReenigneArcher/beautiful-jekyll@c303cbc58172bba5b1295cff2e6930bdad98a997
+title: shared-web Jekyll sample
+author: LizardByte
+avatar: "../avatar.png"
+round-avatar: true
+title-on-all-pages: true
+post_search: false
+edit_page_button: true
+navbar-var-length: true
+keywords: "shared-web, LizardByte, Jekyll, example"
+footer-col: "#242526"
+footer-hover-col: "#28a9e6"
+footer-link-col: "#dfdfdf"
+footer-text-col: "#a8aaa8"
+hover-col: "#28a9e6"
+link-col: "#28a9e6"
+navbar-border-col: "#393a3b"
+navbar-col: "#151515"
+navbar-text-col: "#e4e6eb"
+page-col: "#303436"
+text-col: "#e4e4e4"
+mobile-theme-col: "#05FF3B"
+site-css:
+  - "../dist/crowdin-bootstrap-css.css"
+site-js:
+  - "../dist/crowdin.js"
+  - "../dist/discord.js"
+  - "/assets/js/crowdin-init.js"
+  - "/assets/js/discord-init.js"
+
+# Advanced settings
+timezone: "America/New_York"
+markdown: kramdown
+highlighter: rouge
+permalink: /:year-:month-:day-:title/
+paginate: 5
+kramdown:
+  input: GFM
+
+# Exclude these files from production site
+exclude:
+  - Gemfile
+  - Gemfile.lock
+
+plugins:
+  - jekyll-paginate
+  - jekyll-remote-theme
+  - jekyll-sitemap

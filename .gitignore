@@ -10,5 +10,7 @@ junit.xml
 coverage/
 
 # Ignore build artifacts
+_readthedocs/
+build/
 dist/
 lizardbyte-shared-web*.tgz
