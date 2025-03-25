@@ -1,0 +1,17 @@
+{
+  "name": "shared-web-jekyll-example",
+  "version": "0.0.0",
+  "description": "Example use of @lizardbyte/shared-web in Jekyll.",
+  "dependencies": {
+    "@lizardbyte/shared-web": "file:../../lizardbyte-shared-web-0.0.0.tgz"
+  },
+  "devDependencies": {
+    "npm-run-all": "4.1.5"
+  },
+  "scripts": {
+    "postinstall": "npm-run-all postinstall:*",
+    "postinstall:bundler": "echo 'Installing bundler...' && gem install bundler",
+    "postinstall:bundle": "echo 'Installing Jekyll dependencies...' && bundle install",
+    "build": "jekyll build --verbose --destination ${READTHEDOCS_OUTPUT:-build/}html/jekyll"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "shared-web-sphinx-example",
+  "version": "0.0.0",
+  "description": "Example use of @lizardbyte/shared-web in Sphinx.",
+  "dependencies": {
+    "@lizardbyte/shared-web": "file:../../lizardbyte-shared-web-0.0.0.tgz"
+  },
+  "scripts": {
+    "postinstall": "echo 'Installing Python dependencies...' && python -m pip install -r requirements.txt --no-cache-dir",
+    "build": "python -m sphinx -b html source ${READTHEDOCS_OUTPUT:-build/}html/sphinx/html",
+    "lint": "python -m rstcheck -r ."
+  }
+}

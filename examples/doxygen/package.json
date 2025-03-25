@@ -2,7 +2,7 @@
   "name": "shared-web-doxygen-example",
   "version": "0.0.0",
   "description": "Example use of @lizardbyte/shared-web in doxygen html.",
-  "devDependencies": {
+  "dependencies": {
     "@jothepro/doxygen-awesome-css": "github:jothepro/doxygen-awesome-css#v2.3.4",
     "@lizardbyte/shared-web": "file:../../lizardbyte-shared-web-0.0.0.tgz"
   },

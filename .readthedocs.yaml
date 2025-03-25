@@ -18,15 +18,14 @@ build:
     - npm run generate-docs
     # jekyll example build
     - 'echo "baseurl: projects/shared-web/$READTHEDOCS_VERSION"/jekyll >> ./examples/jekyll/_config.yml'
-    - cd examples/jekyll && gem install bundle
-    - cd examples/jekyll && bundle install
-    - cd examples/jekyll && jekyll build --verbose --destination ${READTHEDOCS_OUTPUT}html/jekyll
+    - cd examples/jekyll && npm install
+    - cd examples/jekyll && npm run build
     # doxygen example build
     - cd examples/doxygen && npm install
     - cd examples/doxygen && npm run build
     # sphinx example build
-    - python -m pip install -r examples/sphinx/requirements.txt --no-cache-dir
-    - cd examples/sphinx && make html BUILDDIR=${READTHEDOCS_OUTPUT}html/sphinx
-    - cd examples/sphinx && rstcheck -r .
+    - cd examples/sphinx && npm install
+    - cd examples/sphinx && npm run build
+    - cd examples/sphinx && npm run lint
     # debug output
     - cd ${READTHEDOCS_OUTPUT}html && ls -la -R
