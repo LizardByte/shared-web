@@ -3,6 +3,8 @@
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
 name: CI
+permissions:
+  contents: read
 
 on:
   pull_request:
@@ -30,6 +32,8 @@ jobs:
       release_generate_release_notes: ${{ steps.setup_release.outputs.release_generate_release_notes }}
       release_tag: ${{ steps.setup_release.outputs.release_tag }}
       release_version: ${{ steps.setup_release.outputs.release_version }}
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -59,8 +63,7 @@ jobs:
         id: test
         env:
           FORCE_COLOR: true
-        run: |
-          npm test
+        run: npm test
 
       - name: Build
         env:
@@ -95,7 +98,7 @@ jobs:
           verbose: true
 
   release:
-    if: ${{ needs.setup_release.outputs.publish_release == 'true' }}
+    if: needs.setup_release.outputs.publish_release == 'true'
     needs:
       - setup_release
       - build
@@ -115,15 +118,15 @@ jobs:
           token: ${{ secrets.GH_BOT_TOKEN }}
 
   publish-gpr:
-    if: ${{ needs.setup_release.outputs.publish_release == 'true' }}
+    if: needs.setup_release.outputs.publish_release == 'true'
     needs:
       - setup_release
       - build
-    runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write  # required for provenance
       packages: write
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -144,8 +147,7 @@ jobs:
           scope: '@lizardbyte'
 
       - name: Update package.json
-        run: |
-          npm version ${{ needs.setup_release.outputs.release_version }} --no-git-tag-version
+        run: npm version ${{ needs.setup_release.outputs.release_version }} --no-git-tag-version
 
       - name: Install dependencies
         run: npm install
