@@ -41,7 +41,7 @@ jobs:
 
       - name: Setup Release
         id: setup_release
-        uses: LizardByte/setup-release-action@v2025.612.120948
+        uses: LizardByte/actions/actions/release_setup@v2025.715.25226
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -106,7 +106,7 @@ jobs:
     steps:
       - name: Create Release
         id: action
-        uses: LizardByte/create-release-action@v2025.612.13419
+        uses: LizardByte/actions/actions/release_create@v2025.715.25226
         with:
           allowUpdates: false
           artifacts: ''
