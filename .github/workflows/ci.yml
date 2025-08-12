@@ -160,9 +160,9 @@ jobs:
         run: |
           # if github registry, use GITHUB_TOKEN
           if [ "${{ matrix.registry-url }}" == "https://npm.pkg.github.com" ]; then
-            echo "NODE_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+            echo "NODE_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> "${GITHUB_OUTPUT}"
           else
-            echo "NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }}" >> $GITHUB_OUTPUT
+            echo "NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }}" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Publish
