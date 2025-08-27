@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@fortawesome/fontawesome-free": "7.0.0",
-    "bootstrap": "5.3.7"
+    "bootstrap": "5.3.8"
   },
   "devDependencies": {
     "@babel/core": "7.28.3",
