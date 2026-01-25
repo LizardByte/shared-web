@@ -15,7 +15,6 @@ let config = {
         'levenshtein-distance': './src/js/levenshtein-distance',
         'lizardbyte-css': './src/js/lizardbyte-css',
         'load-script': './src/js/load-script',
-        'random-quote': './src/js/random-quote',
         'ranking-sorter': './src/js/ranking-sorter',
         'sleep': './src/js/sleep',
     },
