@@ -27,9 +27,7 @@ site-css:
   - "../dist/crowdin-bootstrap-css.css"
 site-js:
   - "../dist/crowdin.js"
-  - "../dist/discord.js"
   - "/assets/js/crowdin-init.js"
-  - "/assets/js/discord-init.js"
 
 # Advanced settings
 timezone: "America/New_York"
