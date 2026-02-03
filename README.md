@@ -16,7 +16,7 @@ Common web assets for use in LizardByte projects.
 
 1. Add the dependency to your package.json file:
    ```bash
-   npm install @lizardbyte/shared-web
+   npm install @lizardbyte/shared-web --ignore-scripts
    ```
 
 ### Install via GitHub Package Registry
@@ -35,5 +35,5 @@ Common web assets for use in LizardByte projects.
 
 2. Add the dependency to your package.json file:
    ```bash
-   npm install @lizardbyte/shared-web
+   npm install @lizardbyte/shared-web --ignore-scripts
    ```

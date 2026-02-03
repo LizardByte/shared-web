@@ -9,7 +9,7 @@ build:
   commands:
     - 'echo "output directory: ${READTHEDOCS_OUTPUT}html"'
     # shared-web build
-    - npm install
+    - npm install --ignore-scripts
     - npm run build
     - npm pack
     - mkdir -p ${READTHEDOCS_OUTPUT}html/dist
@@ -18,13 +18,13 @@ build:
     - npm run generate-docs
     # jekyll example build
     - 'echo "baseurl: projects/shared-web/$READTHEDOCS_VERSION"/jekyll >> ./examples/jekyll/_config.yml'
-    - cd examples/jekyll && npm install
+    - cd examples/jekyll && npm install  # we need to include scripts for postinstall actions
     - cd examples/jekyll && npm run build
     # doxygen example build
-    - cd examples/doxygen && npm install
+    - cd examples/doxygen && npm install --ignore-scripts
     - cd examples/doxygen && npm run build
     # sphinx example build
-    - cd examples/sphinx && npm install
+    - cd examples/sphinx && npm install  # we need to include scripts for postinstall actions
     - cd examples/sphinx && npm run build
     - cd examples/sphinx && npm run lint
     # debug output
