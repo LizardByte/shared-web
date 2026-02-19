@@ -57,10 +57,10 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
         languageTitles = Object.fromEntries(Object.entries(languageTitles).sort((a, b) => a[1].localeCompare(b[1])));
 
         // use this to allow translations to work on PR preview builds
-        let currentBaseUrl = window.location.origin;
+        let currentBaseUrl = globalThis.location.origin;
 
         // Initialize Crowdin translator
-        window.proxyTranslator.init({
+        globalThis.proxyTranslator.init({
             baseUrl: currentBaseUrl,
             distribution: projectSettings[project].distribution,
             defaultLanguage: "en",
@@ -97,8 +97,8 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
 }
 
 // Expose to the global scope
-if (typeof window !== 'undefined') {
-    window.initCrowdIn = initCrowdIn;
+if (typeof globalThis !== 'undefined' && globalThis.window !== undefined) {
+    globalThis.initCrowdIn = initCrowdIn;
 }
 
 module.exports = initCrowdIn;
