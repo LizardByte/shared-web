@@ -67,8 +67,8 @@ describe('initCrowdIn', () => {
 
         expect(window.proxyTranslator.init).toHaveBeenCalledWith(
             expect.objectContaining({
-                baseUrl: "https://app.lizardbyte.dev",
-                distribution: "0913bb75b61f0b26247ffa91bw4",
+                baseUrl: "http://localhost",
+                distribution: "458f881791aebba1d4dde491bw4",
                 defaultLanguage: "en"
             })
         );
@@ -82,8 +82,8 @@ describe('initCrowdIn', () => {
 
         expect(window.proxyTranslator.init).toHaveBeenCalledWith(
             expect.objectContaining({
-                baseUrl: "https://docs.lizardbyte.dev",
-                distribution: "fb3b3d5c18de9bc717d96b91bw4",
+                baseUrl: "http://localhost",
+                distribution: "d6c830ba4b41106fefe5d391bw4",
                 defaultLanguage: "en"
             })
         );
