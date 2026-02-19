@@ -16,63 +16,60 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
         return;
     }
 
-    loadScript('https://proxy-translator.app.crowdin.net/assets/proxy-translator.js', function() {
+    loadScript('https://website-translator.app.crowdin.net/assets/proxy-translator.js', function() {
         // Configure base settings based on project
         const projectSettings = {
             'LizardByte': {
                 baseUrl: "https://app.lizardbyte.dev",
-                valuesParams: "U2FsdGVkX193b3LJT2/HWNIVSb3D61klmnbJ+dvGjoY2XSu35S3gL3FRLBfiXVk4nRsFlfzaC0R7JrklvnS7Xqz5im/VrO+sGzo3LbebxNIMp8LZe28udpnJcA2I2u8B",
-                filePath: "/app.lizardbyte.dev.json",
-                distribution: "0913bb75b61f0b26247ffa91bw4",
+                distribution: "458f881791aebba1d4dde491bw4",
             },
             'LizardByte-docs': {
                 baseUrl: "https://docs.lizardbyte.dev",
-                valuesParams: "U2FsdGVkX19eQczbrFgaLYbrEBP8is5CVpC2YSnXxH/sRjWqaBtQOsLZJbSRMepcn3D2sofzZxALb2pvT3MLmM+WG5EpWSF7CzzYsAOJ+k/FpMUJ1PZ1FQmmlKCIWyD7",
-                filePath: "/docs.lizardbyte.dev.json",
-                distribution: "fb3b3d5c18de9bc717d96b91bw4",
+                distribution: "d6c830ba4b41106fefe5d391bw4",
             }
         };
 
-        let languagesData = {
-            "bg":{"code":"bg","name":"Bulgarian","twoLettersCode":"bg"},
-            "de":{"code":"de","name":"German","twoLettersCode":"de"},
-            "en":{"code":"en","name":"English","twoLettersCode":"en"},
-            "en-GB":{"code":"en-GB","name":"English, United Kingdom","twoLettersCode":"en"},
-            "en-US":{"code":"en-US","name":"English, United States","twoLettersCode":"en"},
-            "es-ES":{"code":"es-ES","name":"Spanish","twoLettersCode":"es"},
-            "fr":{"code":"fr","name":"French","twoLettersCode":"fr"},
-            "it":{"code":"it","name":"Italian","twoLettersCode":"it"},
-            "ja":{"code":"ja","name":"Japanese","twoLettersCode":"ja"},
-            "ko":{"code":"ko","name":"Korean","twoLettersCode":"ko"},
-            "pl":{"code":"pl","name":"Polish","twoLettersCode":"pl"},
-            "pt-BR":{"code":"pt-BR","name":"Portuguese, Brazilian","twoLettersCode":"pt"},
-            "pt-PT":{"code":"pt-PT","name":"Portuguese","twoLettersCode":"pt"},
-            "ru":{"code":"ru","name":"Russian","twoLettersCode":"ru"},
-            "sv-SE":{"code":"sv-SE","name":"Swedish","twoLettersCode":"sv"},
-            "tr":{"code":"tr","name":"Turkish","twoLettersCode":"tr"},
-            "uk":{"code":"uk","name":"Ukrainian","twoLettersCode":"uk"},
-            "zh-CN":{"code":"zh-CN","name":"Chinese Simplified","twoLettersCode":"zh"},
-            "zh-TW":{"code":"zh-TW","name":"Chinese Traditional","twoLettersCode":"zh"},
+        let languageTitles = {
+            "bg": "Български (Bulgarian)",
+            "cs": "Čeština (Czech)",
+            "de": "Deutsch (German)",
+            "en": "English",
+            "en-GB": "English, United Kingdom",
+            "en-US": "English, United States",
+            "es-ES": "Español (Spanish)",
+            "fr": "Français (French)",
+            "hu": "Magyar (Hungarian)",
+            "it": "Italiano (Italian)",
+            "ja": "日本語 (Japanese)",
+            "ko": "한국어 (Korean)",
+            "pl": "Polski (Polish)",
+            "pt-BR": "Português, Brasileiro (Portuguese, Brazilian)",
+            "pt-PT": "Português (Portuguese)",
+            "ru": "Русский (Russian)",
+            "sv-SE": "svenska (Swedish)",
+            "tr": "Türkçe (Turkish)",
+            "uk": "Українська (Ukranian)",
+            "vi": "Tiếng Việt (Vietnamese)",
+            "zh-CN": "简体中文 (Chinese Simplified)",
+            "zh-TW": "繁體中文 (Chinese Traditional)",
         };
         // sort languages by name
-        languagesData = Object.fromEntries(Object.entries(languagesData).sort((a, b) => a[1].name.localeCompare(b[1].name)));
+        languageTitles = Object.fromEntries(Object.entries(languageTitles).sort((a, b) => a[1].localeCompare(b[1])));
+
+        // use this to allow translations to work on PR preview builds
+        let currentBaseUrl = window.location.origin;
 
         // Initialize Crowdin translator
         window.proxyTranslator.init({
-            baseUrl: projectSettings[project].baseUrl,
-            appUrl: "https://proxy-translator.app.crowdin.net",
-            valuesParams: projectSettings[project].valuesParams,
-            distributionBaseUrl: "https://distributions.crowdin.net",
-            filePath: projectSettings[project].filePath,
+            baseUrl: currentBaseUrl,
             distribution: projectSettings[project].distribution,
-            distributionSeparateFiles: undefined,
-            languagesData: languagesData,
             defaultLanguage: "en",
-            defaultLanguageTitle: "English",
-            languageDetectType: "default",
-            poweredBy: false,
+            languageTitles: languageTitles,
+            showDefaultLanguageInUrl: false,
+            languageRoutingMethod: "query",
             position: "bottom-left",
             submenuPosition: "top-left",
+            poweredBy: false,
         });
 
         // Apply styling based on UI framework
