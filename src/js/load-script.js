@@ -20,8 +20,8 @@ function loadScript(url, callback) {
 }
 
 // Expose to the global scope
-if (typeof window !== 'undefined') {
-    window.loadScript = loadScript;
+if (globalThis.window !== undefined) {
+    globalThis.loadScript = loadScript;
 }
 
 module.exports = loadScript;

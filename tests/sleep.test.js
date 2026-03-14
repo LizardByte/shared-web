@@ -16,7 +16,7 @@ describe('sleep function', () => {
     })
 
     beforeEach(() => {
-        jest.spyOn(global, 'setTimeout');
+        jest.spyOn(globalThis, 'setTimeout');
     });
 
     test.each([

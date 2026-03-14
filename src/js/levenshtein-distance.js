@@ -40,8 +40,8 @@ function levenshteinDistance(a, b) {
 }
 
 // Expose to the global scope
-if (typeof window !== 'undefined') {
-    window.levenshteinDistance = levenshteinDistance;
+if (globalThis.window !== undefined) {
+    globalThis.levenshteinDistance = levenshteinDistance;
 }
 
 module.exports = levenshteinDistance;

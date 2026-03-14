@@ -10,22 +10,19 @@ function rankingSorter(firstKey, secondKey) {
             return -1;
         } else if (a[firstKey] < b[firstKey]) {
             return 1;
-        }
-        else {
-            if (a[secondKey] > b[secondKey]) {
-                return 1;
-            } else if (a[secondKey] < b[secondKey]) {
-                return -1;
-            } else {
-                return 0;
-            }
+        } else if (a[secondKey] > b[secondKey]) {
+            return 1;
+        } else if (a[secondKey] < b[secondKey]) {
+            return -1;
+        } else {
+            return 0;
         }
     }
 }
 
 // Expose to the global scope
-if (typeof window !== 'undefined') {
-    window.rankingSorter = rankingSorter;
+if (globalThis.window !== undefined) {
+    globalThis.rankingSorter = rankingSorter;
 }
 
 module.exports = rankingSorter;

@@ -15,8 +15,8 @@ function formatNumber(num, decimalPlaces = 1) {
 }
 
 // Expose to the global scope
-if (typeof window !== 'undefined') {
-    window.formatNumber = formatNumber;
+if (globalThis.window !== undefined) {
+    globalThis.formatNumber = formatNumber;
 }
 
 module.exports = formatNumber;

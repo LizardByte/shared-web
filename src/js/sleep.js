@@ -8,8 +8,8 @@ function sleep(ms) {
 }
 
 // Expose to the global scope
-if (typeof window !== 'undefined') {
-    window.sleep = sleep;
+if (globalThis.window !== undefined) {
+    globalThis.sleep = sleep;
 }
 
 module.exports = sleep;

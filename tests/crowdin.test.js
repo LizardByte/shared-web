@@ -49,7 +49,7 @@ describe('initCrowdIn', () => {
     afterEach(() => {
         jest.clearAllMocks();
         jest.useRealTimers();
-        delete global.window.proxyTranslator;
+        delete globalThis.window.proxyTranslator;
         delete globalThis._crowdinMirrorInstalled;
     });
 
@@ -84,7 +84,7 @@ describe('initCrowdIn', () => {
         // Simulate script loading
         jest.runAllTimers();
 
-        expect(window.proxyTranslator.init).toHaveBeenCalledWith(
+        expect(globalThis.proxyTranslator.init).toHaveBeenCalledWith(
             expect.objectContaining({
                 baseUrl: "http://localhost",
                 distribution: "d6c830ba4b41106fefe5d391bw4",
