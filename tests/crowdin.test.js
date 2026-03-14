@@ -20,7 +20,7 @@ const initCrowdIn = require('../src/js/crowdin');
 describe('initCrowdIn', () => {
     beforeEach(() => {
         // Mock DOM elements
-        global.document.body.innerHTML = `
+        globalThis.document.body.innerHTML = `
             <div id="crowdin-language-picker">
                 <div class="cr-picker-button"></div>
                 <div class="cr-picker-submenu"></div>
@@ -35,7 +35,7 @@ describe('initCrowdIn', () => {
         jest.spyOn(console, 'error').mockImplementation(() => {});
 
         // Mock window.proxyTranslator
-        global.window.proxyTranslator = {
+        globalThis.window.proxyTranslator = {
             init: jest.fn()
         };
 
@@ -69,7 +69,7 @@ describe('initCrowdIn', () => {
         // Simulate script loading
         jest.runAllTimers();
 
-        expect(window.proxyTranslator.init).toHaveBeenCalledWith(
+        expect(globalThis.proxyTranslator.init).toHaveBeenCalledWith(
             expect.objectContaining({
                 baseUrl: "http://localhost",
                 distribution: "458f881791aebba1d4dde491bw4",
