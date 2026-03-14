@@ -5,8 +5,10 @@ export default [
   pluginJs.configs.recommended,
   {
     ignores: [
+        "_readthedocs/**", // generated ReadTheDocs HTML
         "coverage/**",
         "dist/**",
+        "docs/**", // generated JSDoc output
     ],
   },
   {

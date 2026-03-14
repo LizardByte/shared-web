@@ -1,6 +1,52 @@
 const loadScript = require('./load-script');
 
 /**
+ * jsDelivr CDN URL serving Crowdin distribution files from the crowdin-dist
+ * git branch.  jsDelivr unconditionally sets Access-Control-Allow-Origin: *,
+ * so cross-origin fetch() calls succeed without any browser plugin.
+ * The branch is refreshed daily by the "Sync Crowdin Distribution" workflow.
+ * Structure mirrors https://distributions.crowdin.net/<hash>/… exactly.
+ * @type {string}
+ */
+const CROWDIN_DIST_MIRROR = 'https://cdn.jsdelivr.net/gh/LizardByte/shared-web@crowdin-dist';
+
+/**
+ * Monkey-patches globalThis.fetch to redirect Crowdin distribution requests to
+ * the self-hosted GitHub Pages mirror.
+ *
+ * Must be called BEFORE proxy-translator.js is loaded so that every fetch()
+ * the script makes is already intercepted.
+ *
+ * Idempotent – installs the interceptor at most once per page.
+ */
+function _installCrowdinFetchInterceptor() {
+    if (typeof globalThis.fetch !== 'function') return;
+    if (globalThis._crowdinMirrorInstalled) return;
+    globalThis._crowdinMirrorInstalled = true;
+
+    const _origFetch = globalThis.fetch.bind(globalThis);
+
+    globalThis.fetch = function crowdinMirrorFetch(url, options) {
+        if (typeof url === 'string') {
+            let parsed;
+            try {
+                parsed = new URL(url);
+            } catch {
+                // Not a valid absolute URL – pass through unchanged.
+            }
+            // Use exact hostname comparison to avoid prefix-match bypasses
+            // (e.g. distributions.crowdin.net.evil.com) that would be flagged
+            // by incomplete URL sanitisation checks.
+            if (parsed?.protocol === 'https:' && parsed.hostname === 'distributions.crowdin.net') {
+                const mirroredUrl = CROWDIN_DIST_MIRROR + parsed.pathname + parsed.search + parsed.hash;
+                return _origFetch(mirroredUrl, options);
+            }
+        }
+        return _origFetch(url, options);
+    };
+}
+
+/**
  * Initializes Crowdin translation widget based on project and UI platform.
  * @param {string} project - Project name ('LizardByte' or 'LizardByte-docs').
  * @param {string|null} platform - UI platform ('sphinx', or null).
@@ -15,6 +61,10 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
         console.error('Invalid UI. Must be "sphinx", or null');
         return;
     }
+
+    // Redirect distribution CDN requests to our self-hosted GitHub Pages mirror
+    // before the script is even loaded so every fetch() it makes is intercepted.
+    _installCrowdinFetchInterceptor();
 
     loadScript('https://website-translator.app.crowdin.net/assets/proxy-translator.js', function() {
         // Configure base settings based on project
