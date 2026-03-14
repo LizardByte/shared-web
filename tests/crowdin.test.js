@@ -121,7 +121,7 @@ describe('initCrowdIn', () => {
 
 describe('Crowdin fetch interceptor', () => {
     const CROWDIN_CDN = 'https://distributions.crowdin.net';
-    const MIRROR = 'https://cdn.jsdelivr.net/gh/LizardByte/shared-web@crowdin-dist';
+    const MIRROR = 'https://cdn.jsdelivr.net/gh/LizardByte/i18n@dist';
 
     beforeEach(() => {
         // Reset interceptor state so each test gets a fresh install

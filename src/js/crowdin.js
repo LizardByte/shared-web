@@ -8,7 +8,7 @@ const loadScript = require('./load-script');
  * Structure mirrors https://distributions.crowdin.net/<hash>/… exactly.
  * @type {string}
  */
-const CROWDIN_DIST_MIRROR = 'https://cdn.jsdelivr.net/gh/LizardByte/shared-web@crowdin-dist';
+const CROWDIN_DIST_MIRROR = 'https://cdn.jsdelivr.net/gh/LizardByte/i18n@dist';
 
 /**
  * Monkey-patches globalThis.fetch to redirect Crowdin distribution requests to
