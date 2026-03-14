@@ -15,6 +15,10 @@
 const https = require('node:https');
 const fs = require('node:fs');
 const path = require('node:path');
+const zlib = require('node:zlib');
+const { promisify } = require('node:util');
+
+const gunzip = promisify(zlib.gunzip);
 
 const BASE_CDN = 'https://distributions.crowdin.net';
 const OUTPUT_DIR = path.resolve(process.env.OUTPUT_DIR || 'dist-pages/crowdin-dist');
@@ -39,26 +43,43 @@ if (DISTRIBUTIONS.length === 0) {
 }
 
 /**
+ * Collects all data chunks from an HTTP response stream into a single Buffer.
+ * @param {import('http').IncomingMessage} res
+ * @returns {Promise<Buffer>}
+ */
+function collectBody(res) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    res.on('data', (chunk) => chunks.push(chunk));
+    res.on('end', () => resolve(Buffer.concat(chunks)));
+    res.on('error', reject);
+  });
+}
+
+/**
  * Fetches a URL, following redirects, and returns the body as a Buffer.
+ * Transparently decompresses gzip-encoded responses so callers always receive
+ * plain bytes (the Crowdin CDN stores content files with Content-Encoding: gzip,
+ * but jsDelivr re-serves the raw bytes without that header).
  * @param {string} url
  * @returns {Promise<Buffer>}
  */
-function fetchUrl(url) {
+async function fetchUrl(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      // Follow redirects
+    https.get(url, async (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return fetchUrl(res.headers.location).then(resolve).catch(reject);
+        return fetchUrl(res.headers.location).then(resolve, reject);
       }
-      const chunks = [];
-      res.on('data', (chunk) => chunks.push(chunk));
-      res.on('end', () => {
-        if (res.statusCode >= 400) {
-          return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
-        }
-        resolve(Buffer.concat(chunks));
-      });
-      res.on('error', reject);
+      if (res.statusCode >= 400) {
+        return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+      }
+      try {
+        const buffer = await collectBody(res);
+        const isGzip = res.headers['content-encoding'] === 'gzip';
+        resolve(isGzip ? await gunzip(buffer) : buffer);
+      } catch (err) {
+        reject(err);
+      }
     }).on('error', reject);
   });
 }
