@@ -26,7 +26,7 @@
   "devDependencies": {
     "@babel/core": "7.29.0",
     "@babel/preset-env": "7.29.2",
-    "@codecov/webpack-plugin": "1.9.1",
+    "@codecov/webpack-plugin": "2.0.1",
     "@eslint/js": "10.0.1",
     "@jest/globals": "30.3.0",
     "babel-loader": "10.1.1",
