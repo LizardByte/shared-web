@@ -26,7 +26,7 @@ describe('sleep function', () => {
         [2000], // 2 seconds
         [60000], // 60 seconds
     ])('resolves after %i milliseconds', async (delay) => {
-        let delay_value = delay[0];
+        const delay_value = delay;
         const sleepPromise = sleep(delay_value);
         jest.advanceTimersByTime(delay_value);
         await sleepPromise;
