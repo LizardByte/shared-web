@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Example use of @lizardbyte/shared-web in Jekyll.",
   "dependencies": {
-    "@lizardbyte/shared-web": "file:../../lizardbyte-shared-web-0.0.0.tgz"
+    "@lizardbyte/shared-web": "file:../.."
   },
   "devDependencies": {
     "npm-run-all": "4.1.5"

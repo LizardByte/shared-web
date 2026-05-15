@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Example use of @lizardbyte/shared-web in Sphinx.",
   "dependencies": {
-    "@lizardbyte/shared-web": "file:../../lizardbyte-shared-web-0.0.0.tgz"
+    "@lizardbyte/shared-web": "file:../.."
   },
   "scripts": {
     "postinstall": "echo 'Installing Python dependencies...' && python -m pip install -r requirements.txt --no-cache-dir",
