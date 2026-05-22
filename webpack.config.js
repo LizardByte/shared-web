@@ -6,6 +6,7 @@ let production = process.env.NODE_ENV === 'production';
 
 let config = {
     entry: {
+        'clean-jsdoc-theme-css': './src/js/clean-jsdoc-theme-css',
         'crowdin': './src/js/crowdin',
         'crowdin-bootstrap-css': './src/js/crowdin-bootstrap-css',
         'crowdin-clean-jsdoc-css': './src/js/crowdin-clean-jsdoc-css',

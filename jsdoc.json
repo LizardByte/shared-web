@@ -16,7 +16,10 @@
       "add_scripts": "window.initCrowdIn('LizardByte-docs', null);",
       "default_theme": "fallback-dark",
       "favicon": "favicon.ico",
-      "include_css": ["./dist/crowdin-clean-jsdoc-css.css"],
+      "include_css": [
+        "./dist/clean-jsdoc-theme-css.css",
+        "./dist/crowdin-clean-jsdoc-css.css"
+      ],
       "include_js": ["./dist/crowdin.js"],
       "menu": [
         {
