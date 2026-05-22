@@ -41,6 +41,13 @@
           "id": "sphinx-sample"
         },
         {
+          "title": "Rustdoc Sample",
+          "link": "rustdoc/doc/shared_web_rustdoc_example",
+          "target": "_blank",
+          "class": "",
+          "id": "rustdoc-sample"
+        },
+        {
           "title": "❤ Donate",
           "link": "https://app.lizardbyte.dev",
           "target": "_blank",

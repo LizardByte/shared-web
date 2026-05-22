@@ -11,6 +11,7 @@ let config = {
         'crowdin-clean-jsdoc-css': './src/js/crowdin-clean-jsdoc-css',
         'crowdin-doxygen-css': './src/js/crowdin-doxygen-css',
         'crowdin-furo-css': './src/js/crowdin-furo-css',
+        'crowdin-rustdoc-css': './src/js/crowdin-rustdoc-css',
         'format-number': './src/js/format-number',
         'levenshtein-distance': './src/js/levenshtein-distance',
         'lizardbyte-css': './src/js/lizardbyte-css',

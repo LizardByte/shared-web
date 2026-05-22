@@ -1,0 +1,11 @@
+{
+  "name": "shared-web-rustdoc-example",
+  "version": "0.0.0",
+  "description": "Example use of @lizardbyte/shared-web in rustdoc html.",
+  "dependencies": {
+    "@lizardbyte/shared-web": "file:../.."
+  },
+  "scripts": {
+    "build": "node rustdoc/build.js"
+  }
+}

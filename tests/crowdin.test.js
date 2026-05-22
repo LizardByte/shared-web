@@ -29,6 +29,11 @@ describe('initCrowdIn', () => {
 
             <!-- Sphinx sidebar -->
             <div class="sidebar-sticky"></div>
+
+            <!-- rustdoc sidebar -->
+            <nav class="sidebar">
+                <div class="sidebar-elems"></div>
+            </nav>
         `;
 
         // Mock console.error
@@ -60,7 +65,7 @@ describe('initCrowdIn', () => {
 
     it('should validate platform parameter', () => {
         initCrowdIn('LizardByte', 'invalidPlatform');
-        expect(console.error).toHaveBeenCalledWith('Invalid UI. Must be "sphinx", or null');
+        expect(console.error).toHaveBeenCalledWith('Invalid UI. Must be "sphinx", "rustdoc", or null');
     });
 
     it('should initialize proxyTranslator with LizardByte settings', () => {
@@ -115,6 +120,21 @@ describe('initCrowdIn', () => {
 
         expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
         expect(container.style.position).toBe('relative');
+        expect(sidebar.contains(container)).toBe(true);
+    });
+
+    it('should apply rustdoc styling', () => {
+        initCrowdIn('LizardByte', 'rustdoc');
+
+        // Simulate script loading and UI styling timeout
+        jest.runAllTimers();
+
+        const container = document.getElementById('crowdin-language-picker');
+        const sidebar = document.getElementsByClassName('sidebar-elems')[0];
+
+        expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
+        expect(container.classList.contains('rustdoc-crowdin-picker')).toBe(true);
+        expect(container.style.position).toBe('static');
         expect(sidebar.contains(container)).toBe(true);
     });
 });

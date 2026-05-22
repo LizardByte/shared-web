@@ -1,0 +1,30 @@
+#crowdin-language-picker.rustdoc-crowdin-picker {
+  margin: 1rem;
+  width: calc(100% - 2rem);
+}
+
+#crowdin-language-picker.rustdoc-crowdin-picker .cr-picker-button {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#crowdin-language-picker .cr-picker-button,
+#crowdin-language-picker .cr-picker-submenu {
+  background-color: var(--sidebar-background-color, var(--main-background-color, #ffffff)) !important;
+  border: 1px solid var(--border-color, #dddddd) !important;
+  color: var(--main-color, #111111) !important;
+}
+
+#crowdin-language-picker .cr-picker-button:hover,
+#crowdin-language-picker .cr-picker-submenu > a:hover {
+  background-color: var(--main-color, #111111) !important;
+  color: var(--main-background-color, #ffffff) !important;
+}
+
+#crowdin-language-picker .cr-picker-submenu > a {
+  color: var(--main-color, #111111) !important;
+}
+
+#crowdin-language-picker .cr-picker-submenu > a.cr-selected {
+  color: var(--link-color, #3873ad) !important;
+}

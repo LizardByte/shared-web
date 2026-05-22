@@ -49,7 +49,7 @@ function _installCrowdinFetchInterceptor() {
 /**
  * Initializes Crowdin translation widget based on project and UI platform.
  * @param {string} project - Project name ('LizardByte' or 'LizardByte-docs').
- * @param {string|null} platform - UI platform ('sphinx', or null).
+ * @param {string|null} platform - UI platform ('sphinx', 'rustdoc', or null).
  */
 function initCrowdIn(project = 'LizardByte', platform = null) {
     // Input validation
@@ -57,8 +57,8 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
         console.error('Invalid project. Must be "LizardByte" or "LizardByte-docs"');
         return;
     }
-    if (!['sphinx', null].includes(platform)) {
-        console.error('Invalid UI. Must be "sphinx", or null');
+    if (!['sphinx', 'rustdoc', null].includes(platform)) {
+        console.error('Invalid UI. Must be "sphinx", "rustdoc", or null');
         return;
     }
 
@@ -141,6 +141,21 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
             const sidebar = document.getElementsByClassName('sidebar-sticky')[0];
 
             // move button to related pages
+            sidebar.appendChild(container);
+        }
+
+        if (platform === 'rustdoc') {
+            const sidebar = document.querySelector('.sidebar .sidebar-elems') || document.querySelector('.sidebar');
+            if (sidebar === null) {
+                return;
+            }
+
+            container.classList.remove('cr-position-bottom-left');
+            container.classList.add('rustdoc-crowdin-picker');
+            container.style.position = 'static';
+            container.style.left = 'auto';
+            container.style.bottom = 'auto';
+
             sidebar.appendChild(container);
         }
     });

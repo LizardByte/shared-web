@@ -12,4 +12,5 @@ coverage/
 _readthedocs/
 build/
 dist/
+target/
 lizardbyte-shared-web*.tgz

@@ -6,6 +6,7 @@ build:
     nodejs: "22"
     python: "3.13"
     ruby: "3.3"
+    rust: "1.91"
   commands:
     - 'echo "output directory: ${READTHEDOCS_OUTPUT}html"'
     # shared-web build
@@ -26,5 +27,8 @@ build:
     - cd examples/sphinx && npm ci  # we need to include scripts for postinstall actions
     - cd examples/sphinx && npm run build
     - cd examples/sphinx && npm run lint
+    # rustdoc example build
+    - cd examples/rustdoc && npm ci --ignore-scripts
+    - cd examples/rustdoc && npm run build
     # debug output
     - cd ${READTHEDOCS_OUTPUT}html && ls -la -R
