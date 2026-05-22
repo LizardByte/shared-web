@@ -1,0 +1,15 @@
+[package]
+name = "shared-web-rustdoc-example"
+version = "0.0.0"
+edition = "2021"
+description = "Example use of @lizardbyte/shared-web in rustdoc html."
+license = "AGPL-3.0-only"
+publish = false
+exclude = [
+    "build",
+    "node_modules",
+]
+
+[lib]
+name = "shared_web_rustdoc_example"
+path = "src/lib.rs"

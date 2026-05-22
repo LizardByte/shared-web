@@ -17,6 +17,37 @@ jest.mock('../src/js/load-script', () => {
 
 const initCrowdIn = require('../src/js/crowdin');
 
+const delayedPickerMarkup = `
+    <div id="crowdin-language-picker" class="cr-position-bottom-left">
+        <div class="cr-picker-button"></div>
+        <div class="cr-picker-submenu"></div>
+    </div>
+`;
+
+function expectDelayedStyling(options) {
+    globalThis.document.body.innerHTML = options.initialMarkup;
+
+    initCrowdIn('LizardByte', options.platform);
+
+    expect(() => {
+        jest.advanceTimersByTime(0);
+    }).not.toThrow();
+
+    globalThis.document.body.insertAdjacentHTML('beforeend', delayedPickerMarkup);
+
+    jest.advanceTimersByTime(50);
+
+    const container = document.getElementById('crowdin-language-picker');
+    const sidebar = document.getElementsByClassName(options.sidebarClass)[0];
+
+    expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
+    expect(container.style.position).toBe(options.position);
+    if (options.pickerClass !== null) {
+        expect(container.classList.contains(options.pickerClass)).toBe(true);
+    }
+    expect(sidebar.contains(container)).toBe(true);
+}
+
 describe('initCrowdIn', () => {
     beforeEach(() => {
         // Mock DOM elements
@@ -29,6 +60,11 @@ describe('initCrowdIn', () => {
 
             <!-- Sphinx sidebar -->
             <div class="sidebar-sticky"></div>
+
+            <!-- rustdoc sidebar -->
+            <nav class="sidebar">
+                <div class="sidebar-elems"></div>
+            </nav>
         `;
 
         // Mock console.error
@@ -60,7 +96,7 @@ describe('initCrowdIn', () => {
 
     it('should validate platform parameter', () => {
         initCrowdIn('LizardByte', 'invalidPlatform');
-        expect(console.error).toHaveBeenCalledWith('Invalid UI. Must be "sphinx", or null');
+        expect(console.error).toHaveBeenCalledWith('Invalid UI. Must be "sphinx", "rustdoc", or null');
     });
 
     it('should initialize proxyTranslator with LizardByte settings', () => {
@@ -116,6 +152,75 @@ describe('initCrowdIn', () => {
         expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
         expect(container.style.position).toBe('relative');
         expect(sidebar.contains(container)).toBe(true);
+    });
+
+    it('should apply rustdoc styling', () => {
+        initCrowdIn('LizardByte', 'rustdoc');
+
+        // Simulate script loading and UI styling timeout
+        jest.runAllTimers();
+
+        const container = document.getElementById('crowdin-language-picker');
+        const sidebar = document.getElementsByClassName('sidebar-elems')[0];
+
+        expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
+        expect(container.classList.contains('rustdoc-crowdin-picker')).toBe(true);
+        expect(container.style.position).toBe('static');
+        expect(sidebar.contains(container)).toBe(true);
+    });
+
+    it('should wait for sphinx language picker before applying styling', () => {
+        expectDelayedStyling({
+            initialMarkup: '<div class="sidebar-sticky"></div>',
+            pickerClass: null,
+            platform: 'sphinx',
+            position: 'relative',
+            sidebarClass: 'sidebar-sticky',
+        });
+    });
+
+    it('should wait for rustdoc language picker before applying styling', () => {
+        expectDelayedStyling({
+            initialMarkup: '<nav class="sidebar"><div class="sidebar-elems"></div></nav>',
+            pickerClass: 'rustdoc-crowdin-picker',
+            platform: 'rustdoc',
+            position: 'static',
+            sidebarClass: 'sidebar-elems',
+        });
+    });
+
+    it('should move rustdoc language picker to sidebar when sidebar-elems is unavailable', () => {
+        globalThis.document.body.innerHTML = `
+            <nav class="sidebar"></nav>
+            <div id="crowdin-language-picker" class="cr-position-bottom-left">
+                <div class="cr-picker-button"></div>
+                <div class="cr-picker-submenu"></div>
+            </div>
+        `;
+
+        initCrowdIn('LizardByte', 'rustdoc');
+        jest.runAllTimers();
+
+        const container = document.getElementById('crowdin-language-picker');
+        const sidebar = document.getElementsByClassName('sidebar')[0];
+
+        expect(container.classList.contains('rustdoc-crowdin-picker')).toBe(true);
+        expect(sidebar.contains(container)).toBe(true);
+    });
+
+    it('should stop retrying platform styling after the retry limit', () => {
+        globalThis.document.body.innerHTML = `
+            <nav class="sidebar">
+                <div class="sidebar-elems"></div>
+            </nav>
+        `;
+
+        initCrowdIn('LizardByte', 'rustdoc');
+
+        jest.advanceTimersByTime(0);
+        jest.advanceTimersByTime(5000);
+
+        expect(jest.getTimerCount()).toBe(0);
     });
 });
 
@@ -213,5 +318,40 @@ describe('Crowdin fetch interceptor', () => {
         jest.runAllTimers();
 
         expect(globalThis.fetch).toBe(fetchAfterFirst);
+    });
+
+    it('should continue when fetch is unavailable', () => {
+        delete globalThis.fetch;
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        expect(globalThis.proxyTranslator.init).toHaveBeenCalled();
+    });
+
+    it('should pass non-string fetch inputs through unchanged', async () => {
+        const mockFetch = globalThis.fetch;
+        const requestLike = new URL('https://example.com/data.json');
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        await globalThis.fetch(requestLike);
+
+        const calledUrl = mockFetch.mock.calls[0][0];
+        expect(calledUrl).toBe(requestLike);
+    });
+
+    it('should pass invalid URL strings through unchanged', async () => {
+        const mockFetch = globalThis.fetch;
+        const invalidUrl = 'not a valid absolute URL';
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        await globalThis.fetch(invalidUrl);
+
+        const calledUrl = mockFetch.mock.calls[0][0];
+        expect(calledUrl).toBe(invalidUrl);
     });
 });

@@ -45,4 +45,26 @@ describe('loadScript', () => {
     expect(script).toBeInstanceOf(HTMLScriptElement);
     expect(script.src).toBe(url);
   });
+
+  it('should handle load without a callback', () => {
+    const url = 'https://example.com/test-script.js';
+    loadScript(url);
+
+    const script = document.head.querySelector('script');
+
+    expect(() => {
+      script.onload();
+    }).not.toThrow();
+  });
+
+  it('should handle failure without a callback', () => {
+    const url = 'https://example.com/test-script.js';
+    loadScript(url);
+
+    const script = document.head.querySelector('script');
+
+    expect(() => {
+      script.onerror();
+    }).not.toThrow();
+  });
 });

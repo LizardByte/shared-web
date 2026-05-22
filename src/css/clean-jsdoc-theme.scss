@@ -1,0 +1,32 @@
+.navbar-container .navbar {
+  max-width: 74rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.navbar .navbar-left-items {
+  min-width: 0;
+}
+
+.navbar .navbar-item a {
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  white-space: nowrap;
+}
+
+@media screen and (min-width: 65em) and (max-width: 75em) {
+  .navbar .navbar-item a {
+    font-size: 0.8125rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .navbar .icon-button {
+    padding: 0.25rem;
+  }
+
+  .navbar .navbar-right-item {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

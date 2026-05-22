@@ -9,6 +9,7 @@ export default [
         "coverage/**",
         "dist/**",
         "docs/**", // generated JSDoc output
+        "examples/**/build/**", // generated example output
     ],
   },
   {

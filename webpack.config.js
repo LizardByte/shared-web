@@ -6,11 +6,13 @@ let production = process.env.NODE_ENV === 'production';
 
 let config = {
     entry: {
+        'clean-jsdoc-theme-css': './src/js/clean-jsdoc-theme-css',
         'crowdin': './src/js/crowdin',
         'crowdin-bootstrap-css': './src/js/crowdin-bootstrap-css',
         'crowdin-clean-jsdoc-css': './src/js/crowdin-clean-jsdoc-css',
         'crowdin-doxygen-css': './src/js/crowdin-doxygen-css',
         'crowdin-furo-css': './src/js/crowdin-furo-css',
+        'crowdin-rustdoc-css': './src/js/crowdin-rustdoc-css',
         'format-number': './src/js/format-number',
         'levenshtein-distance': './src/js/levenshtein-distance',
         'lizardbyte-css': './src/js/lizardbyte-css',

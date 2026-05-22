@@ -1,0 +1,5 @@
+[build]
+rustdocflags = [
+    "--html-after-content",
+    "rustdoc/shared-web.html",
+]
