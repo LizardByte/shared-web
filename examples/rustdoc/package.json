@@ -6,6 +6,6 @@
     "@lizardbyte/shared-web": "file:../.."
   },
   "scripts": {
-    "build": "node rustdoc/build.js"
+    "build": "cargo doc --no-deps --target-dir build/html/rustdoc && node rustdoc/build.js"
   }
 }

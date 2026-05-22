@@ -30,5 +30,7 @@ build:
     # rustdoc example build
     - cd examples/rustdoc && npm ci --ignore-scripts
     - cd examples/rustdoc && npm run build
+    - mkdir -p ${READTHEDOCS_OUTPUT}html/rustdoc
+    - cp -r examples/rustdoc/build/html/rustdoc/* ${READTHEDOCS_OUTPUT}html/rustdoc/
     # debug output
     - cd ${READTHEDOCS_OUTPUT}html && ls -la -R

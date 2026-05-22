@@ -17,6 +17,37 @@ jest.mock('../src/js/load-script', () => {
 
 const initCrowdIn = require('../src/js/crowdin');
 
+const delayedPickerMarkup = `
+    <div id="crowdin-language-picker" class="cr-position-bottom-left">
+        <div class="cr-picker-button"></div>
+        <div class="cr-picker-submenu"></div>
+    </div>
+`;
+
+function expectDelayedStyling(options) {
+    globalThis.document.body.innerHTML = options.initialMarkup;
+
+    initCrowdIn('LizardByte', options.platform);
+
+    expect(() => {
+        jest.advanceTimersByTime(0);
+    }).not.toThrow();
+
+    globalThis.document.body.insertAdjacentHTML('beforeend', delayedPickerMarkup);
+
+    jest.advanceTimersByTime(50);
+
+    const container = document.getElementById('crowdin-language-picker');
+    const sidebar = document.getElementsByClassName(options.sidebarClass)[0];
+
+    expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
+    expect(container.style.position).toBe(options.position);
+    if (options.pickerClass !== null) {
+        expect(container.classList.contains(options.pickerClass)).toBe(true);
+    }
+    expect(sidebar.contains(container)).toBe(true);
+}
+
 describe('initCrowdIn', () => {
     beforeEach(() => {
         // Mock DOM elements
@@ -139,61 +170,23 @@ describe('initCrowdIn', () => {
     });
 
     it('should wait for sphinx language picker before applying styling', () => {
-        globalThis.document.body.innerHTML = `
-            <div class="sidebar-sticky"></div>
-        `;
-
-        initCrowdIn('LizardByte', 'sphinx');
-
-        expect(() => {
-            jest.advanceTimersByTime(0);
-        }).not.toThrow();
-
-        globalThis.document.body.insertAdjacentHTML('beforeend', `
-            <div id="crowdin-language-picker" class="cr-position-bottom-left">
-                <div class="cr-picker-button"></div>
-                <div class="cr-picker-submenu"></div>
-            </div>
-        `);
-
-        jest.advanceTimersByTime(50);
-
-        const container = document.getElementById('crowdin-language-picker');
-        const sidebar = document.getElementsByClassName('sidebar-sticky')[0];
-
-        expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
-        expect(container.style.position).toBe('relative');
-        expect(sidebar.contains(container)).toBe(true);
+        expectDelayedStyling({
+            initialMarkup: '<div class="sidebar-sticky"></div>',
+            pickerClass: null,
+            platform: 'sphinx',
+            position: 'relative',
+            sidebarClass: 'sidebar-sticky',
+        });
     });
 
     it('should wait for rustdoc language picker before applying styling', () => {
-        globalThis.document.body.innerHTML = `
-            <nav class="sidebar">
-                <div class="sidebar-elems"></div>
-            </nav>
-        `;
-
-        initCrowdIn('LizardByte', 'rustdoc');
-
-        expect(() => {
-            jest.advanceTimersByTime(0);
-        }).not.toThrow();
-
-        globalThis.document.body.insertAdjacentHTML('beforeend', `
-            <div id="crowdin-language-picker" class="cr-position-bottom-left">
-                <div class="cr-picker-button"></div>
-                <div class="cr-picker-submenu"></div>
-            </div>
-        `);
-
-        jest.advanceTimersByTime(50);
-
-        const container = document.getElementById('crowdin-language-picker');
-        const sidebar = document.getElementsByClassName('sidebar-elems')[0];
-
-        expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
-        expect(container.classList.contains('rustdoc-crowdin-picker')).toBe(true);
-        expect(sidebar.contains(container)).toBe(true);
+        expectDelayedStyling({
+            initialMarkup: '<nav class="sidebar"><div class="sidebar-elems"></div></nav>',
+            pickerClass: 'rustdoc-crowdin-picker',
+            platform: 'rustdoc',
+            position: 'static',
+            sidebarClass: 'sidebar-elems',
+        });
     });
 
     it('should move rustdoc language picker to sidebar when sidebar-elems is unavailable', () => {
