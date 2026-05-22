@@ -1,20 +1,7 @@
 <!--LIZARDBYTE/SHARED-WEB START-->
+<link rel="stylesheet" href="crowdin-rustdoc-css.css">
+<script src="crowdin.js"></script>
 <script>
-(function() {
-    const rustdocVars = document.querySelector('meta[name="rustdoc-vars"]');
-    const rootPath = rustdocVars ? rustdocVars.dataset.rootPath : '';
-
-    const stylesheet = document.createElement('link');
-    stylesheet.rel = 'stylesheet';
-    stylesheet.href = rootPath + 'crowdin-rustdoc-css.css';
-    document.head.appendChild(stylesheet);
-
-    const crowdin = document.createElement('script');
-    crowdin.src = rootPath + 'crowdin.js';
-    crowdin.onload = function() {
-        globalThis.initCrowdIn('LizardByte-docs', 'rustdoc');
-    };
-    document.head.appendChild(crowdin);
-}());
+globalThis.initCrowdIn('LizardByte-docs', 'rustdoc');
 </script>
 <!--LIZARDBYTE/SHARED-WEB END-->

@@ -7,30 +7,14 @@
 //!
 //! ### CrowdIn
 //!
-//! Install `@lizardbyte/shared-web`, then add a rustdoc HTML hook file:
+//! Install `@lizardbyte/shared-web`, then create the rustdoc HTML hook at
+//! `rustdoc/shared-web.html` in your crate root. The crate root is the
+//! directory that contains `Cargo.toml`, so this example stores the hook at
+//! `examples/rustdoc/rustdoc/shared-web.html`.
 //!
-//! ```html
-//! <!--LIZARDBYTE/SHARED-WEB START-->
-//! <script>
-//! (function() {
-//!     const rustdocVars = document.querySelector('meta[name="rustdoc-vars"]');
-//!     const rootPath = rustdocVars ? rustdocVars.dataset.rootPath : '';
-//!
-//!     const stylesheet = document.createElement('link');
-//!     stylesheet.rel = 'stylesheet';
-//!     stylesheet.href = rootPath + 'crowdin-rustdoc-css.css';
-//!     document.head.appendChild(stylesheet);
-//!
-//!     const crowdin = document.createElement('script');
-//!     crowdin.src = rootPath + 'crowdin.js';
-//!     crowdin.onload = function() {
-//!         globalThis.initCrowdIn('LizardByte-docs', 'rustdoc');
-//!     };
-//!     document.head.appendChild(crowdin);
-//! }());
-//! </script>
-//! <!--LIZARDBYTE/SHARED-WEB END-->
-//! ```
+//! The hook loads `crowdin.js` and `crowdin-rustdoc-css.css` from the same
+//! directory as each generated HTML page. The example build script copies
+//! those two files beside every generated `.html` file.
 //!
 //! Configure Cargo to pass the hook to rustdoc:
 //!
@@ -42,9 +26,10 @@
 //! ]
 //! ```
 //!
-//! Copy `crowdin.js` and `crowdin-rustdoc-css.css` from
-//! `node_modules/@lizardbyte/shared-web/dist` into the generated rustdoc root
-//! so the hook can load them with rustdoc's page-relative `rootPath`.
+//! When adapting this outside the example, copy `crowdin.js` and
+//! `crowdin-rustdoc-css.css` from `node_modules/@lizardbyte/shared-web/dist`
+//! beside each generated rustdoc HTML page, or adjust the hook paths to point
+//! at a location that every generated page can reach.
 
 /// Returns a greeting for the provided project name.
 ///
