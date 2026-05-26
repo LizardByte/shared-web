@@ -24,8 +24,8 @@
     "bootstrap": "5.3.8"
   },
   "devDependencies": {
-    "@babel/core": "7.29.0",
-    "@babel/preset-env": "7.29.5",
+    "@babel/core": "7.29.7",
+    "@babel/preset-env": "7.29.7",
     "@codecov/webpack-plugin": "2.0.1",
     "@eslint/js": "10.0.1",
     "@jest/globals": "30.4.1",
@@ -48,7 +48,7 @@
     "postcss-preset-env": "11.3.0",
     "sass": "1.100.0",
     "sass-loader": "17.0.0",
-    "webpack": "5.107.1",
+    "webpack": "5.107.2",
     "webpack-cli": "7.0.2",
     "webpack-dev-server": "5.2.4"
   },
