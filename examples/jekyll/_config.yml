@@ -1,7 +1,7 @@
 ---
 # See https://github.com/daattali/beautiful-jekyll/blob/master/_config.yml for documented options
 
-remote_theme: ReenigneArcher/beautiful-jekyll@c380adc80d3a7036506bc0cb5d0de8120b1c8d45
+remote_theme: LizardByte/beautiful-jekyll-next@master
 title: shared-web Jekyll sample
 author: LizardByte
 avatar: "../avatar.png"
