@@ -15,6 +15,4 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "kramdown-parser-gfm", "~> 1.1"
   spec.add_runtime_dependency "kramdown", "~> 2.3"
   spec.add_runtime_dependency "webrick", "~> 1.8"
-
-  spec.add_development_dependency "jekyll-remote-theme", "~> 0.4"
 end
