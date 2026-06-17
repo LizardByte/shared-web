@@ -24,13 +24,13 @@
     "bootstrap": "5.3.8"
   },
   "devDependencies": {
-    "@babel/core": "8.0.0",
-    "@babel/preset-env": "8.0.0",
+    "@babel/core": "8.0.1",
+    "@babel/preset-env": "8.0.1",
     "@codecov/webpack-plugin": "2.0.1",
     "@eslint/js": "10.0.1",
     "@jest/globals": "30.4.1",
     "babel-loader": "10.1.1",
-    "clean-jsdoc-theme": "4.3.2",
+    "clean-jsdoc-theme": "4.3.3",
     "cross-env": "10.1.0",
     "css-loader": "7.1.4",
     "eslint": "10.5.0",
