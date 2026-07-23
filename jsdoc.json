@@ -11,54 +11,48 @@
     "destination": "./_readthedocs/html",
     "recurse": true,
     "verbose": true,
-    "template": "node_modules/clean-jsdoc-theme",
-    "theme_opts": {
-      "add_scripts": "window.initCrowdIn('LizardByte-docs', null);",
-      "default_theme": "fallback-dark",
-      "favicon": "favicon.ico",
-      "include_css": [
-        "./dist/clean-jsdoc-theme-css.css",
-        "./dist/crowdin-clean-jsdoc-css.css"
-      ],
-      "include_js": ["./dist/crowdin.js"],
-      "menu": [
-        {
-          "title": "Jekyll Sample",
-          "link": "jekyll",
-          "target": "_blank",
-          "class": "",
-          "id": "jekyll-sample"
-        },
-        {
-          "title": "Doxygen Sample",
-          "link": "doxygen/html",
-          "target": "_blank",
-          "class": "",
-          "id": "doxygen-sample"
-        },
-        {
-          "title": "Sphinx Sample",
-          "link": "sphinx/html",
-          "target": "_blank",
-          "class": "",
-          "id": "sphinx-sample"
-        },
-        {
-          "title": "Rustdoc Sample",
-          "link": "rustdoc/doc/shared_web_rustdoc_example",
-          "target": "_blank",
-          "class": "",
-          "id": "rustdoc-sample"
-        },
-        {
-          "title": "❤ Donate",
-          "link": "https://app.lizardbyte.dev",
-          "target": "_blank",
-          "class": "",
-          "id": "donate"
-        }
-      ]
-    }
+    "template": "node_modules/clean-jsdoc-theme/dist",
+    "customJs": "window.initCrowdIn('LizardByte-docs', null);",
+    "customCssFile": ["./dist/crowdin-clean-jsdoc-css.css"],
+    "customJsFile": ["./dist/crowdin.js"],
+    "favicon": "./docs/static/favicon.ico",
+    "menu": [
+      {
+        "title": "Jekyll Sample",
+        "link": "jekyll",
+        "target": "_blank",
+        "class": "",
+        "id": "jekyll-sample"
+      },
+      {
+        "title": "Doxygen Sample",
+        "link": "doxygen/html",
+        "target": "_blank",
+        "class": "",
+        "id": "doxygen-sample"
+      },
+      {
+        "title": "Sphinx Sample",
+        "link": "sphinx/html",
+        "target": "_blank",
+        "class": "",
+        "id": "sphinx-sample"
+      },
+      {
+        "title": "Rustdoc Sample",
+        "link": "rustdoc/doc/shared_web_rustdoc_example",
+        "target": "_blank",
+        "class": "",
+        "id": "rustdoc-sample"
+      },
+      {
+        "title": "❤ Donate",
+        "link": "https://app.lizardbyte.dev",
+        "target": "_blank",
+        "class": "",
+        "id": "donate"
+      }
+    ]
   },
   "markdown": {
     "hardwrap": false,

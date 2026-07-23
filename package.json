@@ -68,7 +68,7 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
-    "generate-docs": "jsdoc --configure jsdoc.json --verbose",
+    "generate-docs": "jsdoc --configure jsdoc.config.js --verbose",
     "start": "webpack serve",
     "test": "npm-run-all test:unit test:report test:lint",
     "test:unit": "jest --coverage",
