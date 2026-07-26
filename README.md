@@ -21,6 +21,23 @@
 
 Common web assets for use in LizardByte projects.
 
+## CDN
+
+Published package assets are available through [jsDelivr](https://www.jsdelivr.com/).
+For example, a language icon can be embedded directly:
+
+```html
+<img
+  src="https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/language-icons/JavaScript.svg"
+  alt="JavaScript"
+  width="32"
+  height="32"
+/>
+```
+
+Replace `latest` with a published package version for an immutable URL. URL-encode
+icon filenames that contain spaces or other reserved characters.
+
 ## Installation
 
 ### Install via NPM registry
