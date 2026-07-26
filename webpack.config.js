@@ -1,6 +1,18 @@
+const fs = require('node:fs/promises');
 const path = require('node:path');
 const { codecovWebpackPlugin } = require("@codecov/webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+class CopyLanguageIconsPlugin {
+    apply(compiler) {
+        compiler.hooks.afterEmit.tapPromise('CopyLanguageIconsPlugin', async () => {
+            const outputPath = path.resolve(compiler.options.output.path, 'language-icons');
+
+            await fs.rm(outputPath, { recursive: true, force: true });
+            await fs.cp(path.resolve(__dirname, 'src/language-icons'), outputPath, { recursive: true });
+        });
+    }
+}
 
 let production = process.env.NODE_ENV === 'production';
 
@@ -76,6 +88,7 @@ let config = {
         ],
     },
     plugins: [
+        new CopyLanguageIconsPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].css',
         }),
