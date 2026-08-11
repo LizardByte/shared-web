@@ -24,9 +24,9 @@ page-col: "#303436"
 text-col: "#e4e4e4"
 mobile-theme-col: "#05FF3B"
 site-css:
-  - "../dist/crowdin-bootstrap-css.css"
+  - "/assets/shared-web/crowdin-bootstrap-css.css"
 site-js:
-  - "../dist/crowdin.js"
+  - "/assets/shared-web/crowdin.js"
   - "/assets/js/crowdin-init.js"
 
 # Advanced settings

@@ -12,6 +12,8 @@
     "postinstall": "npm-run-all postinstall:*",
     "postinstall:bundler": "echo 'Installing bundler...' && gem install bundler",
     "postinstall:bundle": "echo 'Installing Jekyll dependencies...' && bundle install",
-    "build": "bundle exec jekyll build --verbose --destination ${READTHEDOCS_OUTPUT:-build/}html/jekyll"
+    "build": "npm-run-all build:site build:assets",
+    "build:assets": "node build.js",
+    "build:site": "bundle exec jekyll build --verbose --destination ${READTHEDOCS_OUTPUT:-build/}html/jekyll"
   }
 }
