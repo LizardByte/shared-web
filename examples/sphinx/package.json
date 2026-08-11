@@ -8,6 +8,6 @@
   "scripts": {
     "postinstall": "echo 'Installing Python dependencies...' && python -m pip install -r requirements.txt --no-cache-dir",
     "build": "python -m sphinx -b html source ${READTHEDOCS_OUTPUT:-build/}html/sphinx/html",
-    "lint": "python -m rstcheck -r ."
+    "lint": "python -m rstcheck -r source"
   }
 }

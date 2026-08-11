@@ -11,6 +11,143 @@ const loadScript = require('./load-script');
 const CROWDIN_DIST_MIRROR = 'https://cdn.jsdelivr.net/gh/LizardByte/i18n@dist';
 const CROWDIN_PLATFORM_STYLING_MAX_ATTEMPTS = 100;
 const CROWDIN_PLATFORM_STYLING_RETRY_DELAY_MS = 50;
+const CROWDIN_INLINE_ELEMENT_SELECTOR = [
+    'a',
+    'abbr',
+    'b',
+    'cite',
+    'code',
+    'del',
+    'em',
+    'i',
+    'ins',
+    'kbd',
+    'mark',
+    'q',
+    's',
+    'samp',
+    'small',
+    'span',
+    'strong',
+    'sub',
+    'sup',
+    'time',
+    'u',
+    'var',
+].join(',');
+
+/**
+ * Records whitespace that separates text from inline elements before Crowdin translates the page.
+ * @returns {Array<{
+ *     node: Text,
+ *     leading: boolean,
+ *     trailing: boolean,
+ *     previousInline: Element|null,
+ *     nextInline: Element|null,
+ *     whitespaceOnly: boolean
+ * }>} Recorded text-node boundaries.
+ */
+function _captureCrowdinWhitespaceBoundaries() {
+    const boundaries = [];
+    const walker = document.createTreeWalker(document.body, globalThis.NodeFilter.SHOW_TEXT);
+    let node = walker.nextNode();
+
+    while (node !== null) {
+        const previousIsInline = node.previousSibling instanceof globalThis.Element &&
+            node.previousSibling.matches(CROWDIN_INLINE_ELEMENT_SELECTOR);
+        const nextIsInline = node.nextSibling instanceof globalThis.Element &&
+            node.nextSibling.matches(CROWDIN_INLINE_ELEMENT_SELECTOR);
+        const leading = previousIsInline && /^\s/.test(node.data);
+        const trailing = nextIsInline && /\s$/.test(node.data);
+
+        if (leading || trailing) {
+            boundaries.push({
+                node,
+                leading,
+                trailing,
+                previousInline: previousIsInline ? node.previousSibling : null,
+                nextInline: nextIsInline ? node.nextSibling : null,
+                whitespaceOnly: /^\s*$/.test(node.data),
+            });
+        }
+
+        node = walker.nextNode();
+    }
+
+    return boundaries;
+}
+
+/**
+ * Finds the current text node for a boundary after Crowdin changes the DOM.
+ * @param {Object} boundary Recorded whitespace boundary.
+ * @returns {Text|null} Current or recreated text node.
+ */
+function _resolveCrowdinWhitespaceNode(boundary) {
+    if (boundary.node.isConnected) return boundary.node;
+
+    const previousReplacement = boundary.previousInline?.nextSibling;
+    if (previousReplacement instanceof globalThis.Text && previousReplacement.isConnected) {
+        boundary.node = previousReplacement;
+        return boundary.node;
+    }
+    const nextReplacement = boundary.nextInline?.previousSibling;
+    if (nextReplacement instanceof globalThis.Text && nextReplacement.isConnected) {
+        boundary.node = nextReplacement;
+        return boundary.node;
+    }
+    if (!boundary.whitespaceOnly) return null;
+
+    const replacement = document.createTextNode('');
+    if (boundary.previousInline?.isConnected) {
+        boundary.previousInline.after(replacement);
+    } else if (boundary.nextInline?.isConnected) {
+        boundary.nextInline.before(replacement);
+    } else {
+        return null;
+    }
+
+    boundary.node = replacement;
+    return boundary.node;
+}
+
+/**
+ * Restores whitespace that Crowdin removed from translated text-node boundaries.
+ * @param {Array<Object>} boundaries Recorded text-node boundaries.
+ */
+function _restoreCrowdinWhitespaceBoundaries(boundaries) {
+    boundaries.forEach((boundary) => {
+        const node = _resolveCrowdinWhitespaceNode(boundary);
+        if (node === null) return;
+
+        if (boundary.leading && !/^\s/.test(node.data)) {
+            node.data = ' ' + node.data;
+        }
+        if (boundary.trailing && !/\s$/.test(node.data)) {
+            node.data += ' ';
+        }
+    });
+}
+
+/**
+ * Creates the Website Translator callback and observes later translation mutations.
+ * @param {Array<Object>} boundaries Recorded text-node boundaries.
+ * @returns {Function} Website Translator callback.
+ */
+function _createCrowdinTranslationCallback(boundaries) {
+    const translationObserver = new globalThis.MutationObserver(restoreAndObserve);
+
+    function restoreAndObserve() {
+        translationObserver.disconnect();
+        _restoreCrowdinWhitespaceBoundaries(boundaries);
+        translationObserver.observe(document.body, {
+            characterData: true,
+            childList: true,
+            subtree: true,
+        });
+    }
+
+    return restoreAndObserve;
+}
 
 /**
  * Monkey-patches globalThis.fetch to redirect Crowdin distribution requests to
@@ -171,8 +308,11 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
         let currentBaseUrl = globalThis.location.origin;
 
         // Initialize Crowdin translator
+        const whitespaceBoundaries = _captureCrowdinWhitespaceBoundaries();
+
         globalThis.proxyTranslator.init({
             baseUrl: currentBaseUrl,
+            callback: _createCrowdinTranslationCallback(whitespaceBoundaries),
             distribution: projectSettings[project].distribution,
             defaultLanguage: "en",
             languageTitles: languageTitles,

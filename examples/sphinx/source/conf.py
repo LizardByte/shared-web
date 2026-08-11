@@ -60,19 +60,22 @@ html_logo = os.path.join(root_dir, 'docs', 'static', 'logo.png')
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = [
+    '_static',
+    '../node_modules/@lizardbyte/shared-web/dist',
+]
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
 html_css_files = [
     # use jsdelivr for an easy way to include the css
     # 'https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin-furo-css.css',
-    '../../../dist/crowdin-furo-css.css',  # crowdin style from the readthedocs build
+    'crowdin-furo-css.css',  # crowdin style from the installed shared-web package
 ]
 html_js_files = [
     # use jsdelivr for an easy way to include the script
     # 'https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin.js',
-    '../../../dist/crowdin.js',  # crowdin language selector from the readthedocs build
+    'crowdin.js',  # crowdin language selector from the installed shared-web package
     'js/crowdin.js',  # initialize crowdin language selector
 ]
 

@@ -86,6 +86,7 @@ describe('initCrowdIn', () => {
         jest.clearAllMocks();
         jest.useRealTimers();
         delete globalThis.window.proxyTranslator;
+        delete globalThis.window.i18nextify;
         delete globalThis._crowdinMirrorInstalled;
     });
 
@@ -112,6 +113,89 @@ describe('initCrowdIn', () => {
                 defaultLanguage: "en"
             })
         );
+    });
+
+    it('should only pass supported Website Translator options', () => {
+        initCrowdIn();
+
+        // Simulate script loading
+        jest.runAllTimers();
+
+        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
+        expect(Object.keys(options).sort()).toEqual([
+            'baseUrl',
+            'callback',
+            'defaultLanguage',
+            'distribution',
+            'languageRoutingMethod',
+            'languageTitles',
+            'position',
+            'poweredBy',
+            'showDefaultLanguageInUrl',
+            'submenuPosition',
+        ]);
+    });
+
+    it('should restore whitespace around translated inline elements', () => {
+        globalThis.document.body.innerHTML = `
+            <p id="translated">
+                GitHub <em>Discussions</em> are available. <strong>Yearly:</strong> <strong>$14.99</strong>, billed.
+            </p>
+            <p id="detached">Before <i>removed</i></p>
+            <p id="next-anchor"><i>gone</i> <strong>kept</strong></p>
+            <p id="no-anchor"><i>gone</i> <strong>also gone</strong></p>
+        `;
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
+        const translated = globalThis.document.getElementById('translated');
+        const emphasis = translated.querySelector('em');
+        const strongElements = translated.querySelectorAll('strong');
+        const detachedBoundary = globalThis.document.querySelector('#detached i').previousSibling;
+        const nextAnchor = globalThis.document.getElementById('next-anchor');
+        const nextAnchorWhitespace = nextAnchor.querySelector('i').nextSibling;
+        const noAnchor = globalThis.document.getElementById('no-anchor');
+
+        emphasis.previousSibling.replaceWith(document.createTextNode('GitHub'));
+        emphasis.nextSibling.replaceWith(document.createTextNode('are available. '));
+        strongElements[0].nextSibling.remove();
+        detachedBoundary.remove();
+        nextAnchor.querySelector('i').remove();
+        nextAnchorWhitespace.remove();
+        noAnchor.remove();
+
+        options.callback();
+        options.callback();
+
+        expect(translated.textContent.trim()).toBe(
+            'GitHub Discussions are available. Yearly: $14.99, billed.'
+        );
+        expect(nextAnchor.textContent).toBe(' kept');
+    });
+
+    it('should restore whitespace after later asynchronous DOM changes', async () => {
+        globalThis.document.body.innerHTML = '<p id="translated">Use <a href="#">this link</a> here.</p>';
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
+        const translated = globalThis.document.getElementById('translated');
+        const link = translated.querySelector('a');
+
+        options.callback();
+        link.previousSibling.data = link.previousSibling.data.trimEnd();
+        await Promise.resolve();
+
+        expect(translated.textContent).toBe('Use this link here.');
+
+        jest.advanceTimersByTime(1000);
+        link.nextSibling.data = link.nextSibling.data.trimStart();
+        await Promise.resolve();
+
+        expect(translated.textContent).toBe('Use this link here.');
     });
 
     it('should initialize proxyTranslator with LizardByte-docs settings', () => {
