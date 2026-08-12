@@ -37,11 +37,43 @@ const CROWDIN_INLINE_ELEMENT_SELECTOR = [
 ].join(',');
 
 /**
+ * Returns a sibling when it is an inline element whose boundary Crowdin may rewrite.
+ * @param {Node|null} sibling Candidate sibling.
+ * @returns {Element|null} Matching inline element.
+ */
+function _getCrowdinInlineSibling(sibling) {
+    if (!(sibling instanceof globalThis.Element)) return null;
+    return sibling.matches(CROWDIN_INLINE_ELEMENT_SELECTOR) ? sibling : null;
+}
+
+/**
+ * Returns the exact whitespace at the start of a string.
+ * @param {string} text Text to inspect.
+ * @returns {string} Leading whitespace.
+ */
+function _getLeadingWhitespace(text) {
+    const trimmedText = text.trimStart();
+    return text.slice(0, text.length - trimmedText.length);
+}
+
+/**
+ * Returns the exact whitespace at the end of a string.
+ * @param {string} text Text to inspect.
+ * @returns {string} Trailing whitespace.
+ */
+function _getTrailingWhitespace(text) {
+    const trimmedText = text.trimEnd();
+    return text.slice(trimmedText.length);
+}
+
+/**
  * Records whitespace that separates text from inline elements before Crowdin translates the page.
  * @returns {Array<{
  *     node: Text,
  *     leading: boolean,
+ *     leadingWhitespace: string,
  *     trailing: boolean,
+ *     trailingWhitespace: string,
  *     previousInline: Element|null,
  *     nextInline: Element|null,
  *     whitespaceOnly: boolean
@@ -53,21 +85,23 @@ function _captureCrowdinWhitespaceBoundaries() {
     let node = walker.nextNode();
 
     while (node !== null) {
-        const previousIsInline = node.previousSibling instanceof globalThis.Element &&
-            node.previousSibling.matches(CROWDIN_INLINE_ELEMENT_SELECTOR);
-        const nextIsInline = node.nextSibling instanceof globalThis.Element &&
-            node.nextSibling.matches(CROWDIN_INLINE_ELEMENT_SELECTOR);
-        const leading = previousIsInline && /^\s/.test(node.data);
-        const trailing = nextIsInline && /\s$/.test(node.data);
+        const previousInline = _getCrowdinInlineSibling(node.previousSibling);
+        const nextInline = _getCrowdinInlineSibling(node.nextSibling);
+        const leadingWhitespace = previousInline === null ? '' : _getLeadingWhitespace(node.data);
+        const trailingWhitespace = nextInline === null ? '' : _getTrailingWhitespace(node.data);
+        const leading = leadingWhitespace !== '';
+        const trailing = trailingWhitespace !== '';
 
         if (leading || trailing) {
             boundaries.push({
                 node,
                 leading,
+                leadingWhitespace,
                 trailing,
-                previousInline: previousIsInline ? node.previousSibling : null,
-                nextInline: nextIsInline ? node.nextSibling : null,
-                whitespaceOnly: /^\s*$/.test(node.data),
+                trailingWhitespace,
+                previousInline,
+                nextInline,
+                whitespaceOnly: node.data.trim() === '',
             });
         }
 
@@ -119,11 +153,14 @@ function _restoreCrowdinWhitespaceBoundaries(boundaries) {
         const node = _resolveCrowdinWhitespaceNode(boundary);
         if (node === null) return;
 
-        if (boundary.leading && !/^\s/.test(node.data)) {
-            node.data = ' ' + node.data;
+        const currentLeadingWhitespace = _getLeadingWhitespace(node.data);
+        if (boundary.leading && currentLeadingWhitespace !== boundary.leadingWhitespace) {
+            node.data = boundary.leadingWhitespace + node.data.slice(currentLeadingWhitespace.length);
         }
-        if (boundary.trailing && !/\s$/.test(node.data)) {
-            node.data += ' ';
+        const currentTrailingWhitespace = _getTrailingWhitespace(node.data);
+        if (boundary.trailing && currentTrailingWhitespace !== boundary.trailingWhitespace) {
+            const translatedTextEnd = node.data.length - currentTrailingWhitespace.length;
+            node.data = node.data.slice(0, translatedTextEnd) + boundary.trailingWhitespace;
         }
     });
 }

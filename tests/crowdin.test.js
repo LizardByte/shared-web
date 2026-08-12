@@ -175,6 +175,27 @@ describe('initCrowdIn', () => {
         expect(nextAnchor.textContent).toBe(' kept');
     });
 
+    it('should restore line breaks between translated syntax-highlighted lines', () => {
+        globalThis.document.body.innerHTML = [
+            '<pre id="code-block"><span></span><span class="k">- [x]</span> This is a complete item\n',
+            '<span class="k">- [ ]</span> This is an incomplete item\n</pre>',
+        ].join('');
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
+        const codeBlock = globalThis.document.getElementById('code-block');
+        const firstLineText = codeBlock.querySelector('.k').nextSibling;
+
+        firstLineText.data = firstLineText.data.trim();
+        options.callback();
+
+        expect(codeBlock.textContent).toBe(
+            '- [x] This is a complete item\n- [ ] This is an incomplete item\n'
+        );
+    });
+
     it('should restore whitespace after later asynchronous DOM changes', async () => {
         globalThis.document.body.innerHTML = '<p id="translated">Use <a href="#">this link</a> here.</p>';
 

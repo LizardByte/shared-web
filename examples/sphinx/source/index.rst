@@ -27,3 +27,14 @@ Then create a file named ``js/crowdin.js`` located in the ``html_static_path`` d
 .. code-block:: javascript
 
    window.initCrowdIn('LizardByte-docs', 'sphinx')
+
+Whitespace restoration example
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The translated block below intentionally places each item on its own syntax-highlighted line. It provides a visual
+regression check that CrowdIn preserves line breaks between adjacent inline elements.
+
+.. code-block:: markdown
+
+   - [x] This is a complete item
+   - [ ] This is an incomplete item
