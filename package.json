@@ -44,7 +44,7 @@
     "npm-run-all2": "9.0.3",
     "postcss": "8.5.26",
     "postcss-loader": "8.2.1",
-    "postcss-preset-env": "11.3.2",
+    "postcss-preset-env": "11.4.0",
     "sass": "1.102.0",
     "sass-loader": "17.0.0",
     "webpack": "5.109.2",
