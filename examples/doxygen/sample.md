@@ -1,31 +1,34 @@
 # shared-web Doxygen sample
 
-This is a sample project for Doxygen with doxygen-awesome-css theme. This project allows you to visualize how the
-widgets appear in Doxygen documentation.
-
-This will be automatically enabled in our [doxyconfig](https://github.com/LizardByte/doxyconfig) repo.
+This is a sample project for Doxygen with Dockle. It allows you to visualize how shared-web widgets appear in
+Doxygen documentation while Dockle owns the generated Doxyfile and theme.
 
 ## Widgets
 
-You can include widgets in your Doxygen documentation by adding the following to your
-Doxyfile (or Doxygen configuration file). You may need to adjust the paths depending on your project structure.
+You can include widgets in your Doxygen documentation by adding the following to
+`dockle.toml`. You may need to adjust the paths depending on your project structure.
 
 ### CrowdIn
 
-Doxyfile:
-```doxygen
-HTML_EXTRA_FILES += ../node_modules/@lizardbyte/shared-web/dist/crowdin.js
-HTML_EXTRA_STYLESHEET += ../node_modules/@lizardbyte/shared-web/dist/crowdin-doxygen-css.css
+`dockle.toml`:
+```toml
+[targets.doxygen]
+extra_files = ["dist/crowdin.js"]
+extra_stylesheets = ["dist/crowdin-doxygen-css.css"]
 ```
 
-header.html:
+Authored page:
 ```html
-<!--LIZARDBYTE/SHARED-WEB START-->
-<script type="text/javascript" src="$relpath^crowdin.js"></script>
+<script src="crowdin.js"></script>
 <script type="text/javascript">
-    initCrowdIn('LizardByte-docs', null);
+  initCrowdIn('LizardByte-docs', null);
 </script>
 ```
+
+@htmlonly
+<script src="crowdin.js"></script>
+<script>initCrowdIn('LizardByte-docs', null);</script>
+@endhtmlonly
 
 <details style="display: none;">
   <summary></summary>

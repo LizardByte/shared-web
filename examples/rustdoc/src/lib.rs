@@ -13,8 +13,8 @@
 //! `examples/rustdoc/rustdoc/shared-web.html`.
 //!
 //! The hook loads `crowdin.js` and `crowdin-rustdoc-css.css` from the same
-//! directory as each generated HTML page. The example build script copies
-//! those two files beside every generated `.html` file.
+//! directory as each generated HTML page. Dockle copies those files beside
+//! every generated `.html` file from `[targets.rustdoc].extra_files`.
 //!
 //! Configure Cargo to pass the hook to rustdoc:
 //!
@@ -26,10 +26,10 @@
 //! ]
 //! ```
 //!
-//! When adapting this outside the example, copy `crowdin.js` and
-//! `crowdin-rustdoc-css.css` from `node_modules/@lizardbyte/shared-web/dist`
-//! beside each generated rustdoc HTML page, or adjust the hook paths to point
-//! at a location that every generated page can reach.
+//! ```toml
+//! [targets.rustdoc]
+//! extra_files = ["dist/crowdin.js", "dist/crowdin-rustdoc-css.css"]
+//! ```
 
 /// Returns a greeting for the provided project name.
 ///

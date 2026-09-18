@@ -1,0 +1,59 @@
+[project]
+name = "shared-web"
+version = "0.0.0"
+description = "Shared web assets for LizardByte projects."
+repository = "https://github.com/LizardByte/shared-web"
+logo = "docs/static/logo.png"
+favicon = "docs/static/favicon.ico"
+
+[build]
+output = "_site"
+work = ".dockle"
+strict = true
+clean = true
+
+[[targets]]
+name = "jsdoc"
+title = "shared-web JavaScript API"
+framework = "jsdoc"
+source = "src"
+
+[targets.jsdoc]
+inputs = ["src"]
+readme = "README.md"
+include_pattern = '.+\.js$'
+
+[[targets]]
+name = "doxygen"
+title = "Doxygen integration example"
+framework = "doxygen"
+source = "examples/doxygen"
+entry = "sample.md"
+
+[targets.doxygen]
+inputs = ["examples/doxygen/sample.md"]
+extra_stylesheets = ["dist/crowdin-doxygen-css.css"]
+extra_files = ["dist/crowdin.js"]
+main_page = "examples/doxygen/sample.md"
+warn_if_undocumented = false
+warn_no_paramdoc = false
+
+[[targets]]
+name = "sphinx"
+title = "Sphinx integration example"
+framework = "sphinx"
+source = "examples/sphinx/source"
+
+[targets.sphinx]
+static_paths = ["examples/sphinx/source/_static", "dist"]
+extra_stylesheets = ["crowdin-furo-css.css"]
+extra_javascript = ["crowdin.js", "js/crowdin.js"]
+
+[[targets]]
+name = "rustdoc"
+title = "rustdoc integration example"
+framework = "rustdoc"
+source = "examples/rustdoc"
+
+[targets.rustdoc]
+extra_files = ["dist/crowdin.js", "dist/crowdin-rustdoc-css.css"]
