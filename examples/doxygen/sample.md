@@ -5,16 +5,25 @@ Doxygen documentation while Dockle owns the generated Doxyfile and theme.
 
 ## Widgets
 
-You can include widgets in your Doxygen documentation by adding the following to
-`dockle.toml`. You may need to adjust the paths depending on your project structure.
+You can include widgets in your Doxygen documentation from the installed npm
+package. First add shared-web to the project:
+
+```bash
+npm install --save-dev @lizardbyte/shared-web --ignore-scripts
+```
+
+Doxygen's native extra-asset hooks require local files, so point `dockle.toml`
+at the package under `node_modules`. You may need to adjust the paths depending
+on your project structure. Dockle targets that accept web URLs can instead use
+the equivalent version-pinned assets from jsDelivr.
 
 ### CrowdIn
 
 `dockle.toml`:
 ```toml
 [targets.doxygen]
-extra_files = ["dist/crowdin.js"]
-extra_stylesheets = ["dist/crowdin-dockle-css.css"]
+extra_files = ["node_modules/@lizardbyte/shared-web/dist/crowdin.js"]
+extra_stylesheets = ["node_modules/@lizardbyte/shared-web/dist/crowdin-dockle-css.css"]
 ```
 
 Authored page:
