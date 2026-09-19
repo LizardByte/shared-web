@@ -15,9 +15,9 @@ Add the following to ``dockle.toml`` to enable the CrowdIn language selector wit
 .. code-block:: toml
 
    [targets.sphinx]
-   static_paths = ["docs/_static", "dist"]
-   extra_stylesheets = ["crowdin-dockle-css.css"]
-   extra_javascript = ["crowdin.js", "js/crowdin.js"]
+   static_paths = ["docs/_static"]
+   extra_stylesheets = ["https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin-dockle-css.css"]
+   extra_javascript = ["https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin.js", "js/crowdin.js"]
 
 Then create ``js/crowdin.js`` in an authored static directory:
 

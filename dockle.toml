@@ -12,6 +12,9 @@ work = ".dockle"
 strict = true
 clean = true
 
+# This repository dogfoods its unreleased dist assets. Released consumers can
+# use the equivalent jsDelivr URLs shown in the framework examples.
+
 [[targets]]
 name = "jsdoc"
 title = "shared-web JavaScript API"
@@ -23,6 +26,9 @@ home = true
 inputs = ["src"]
 readme = "README.md"
 include_pattern = '.+\.js$'
+extra_files = ["dist/crowdin.js", "dist/crowdin-dockle-css.css", "examples/jsdoc/crowdin-init.js"]
+extra_stylesheets = ["crowdin-dockle-css.css"]
+extra_javascript = ["crowdin.js", "crowdin-init.js"]
 
 [[targets]]
 name = "doxygen"

@@ -24,30 +24,6 @@ const delayedPickerMarkup = `
     </div>
 `;
 
-function expectDelayedStyling(options) {
-    globalThis.document.body.innerHTML = options.initialMarkup;
-
-    initCrowdIn('LizardByte', options.platform);
-
-    expect(() => {
-        jest.advanceTimersByTime(0);
-    }).not.toThrow();
-
-    globalThis.document.body.insertAdjacentHTML('beforeend', delayedPickerMarkup);
-
-    jest.advanceTimersByTime(50);
-
-    const container = document.getElementById('crowdin-language-picker');
-    const sidebar = document.getElementsByClassName(options.sidebarClass)[0];
-
-    expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
-    expect(container.style.position).toBe(options.position);
-    if (options.pickerClass !== null) {
-        expect(container.classList.contains(options.pickerClass)).toBe(true);
-    }
-    expect(sidebar.contains(container)).toBe(true);
-}
-
 describe('initCrowdIn', () => {
     beforeEach(() => {
         // Mock DOM elements
@@ -58,13 +34,6 @@ describe('initCrowdIn', () => {
                 <div class="cr-selected"></div>
             </div>
 
-            <!-- Sphinx sidebar -->
-            <div class="sidebar-sticky"></div>
-
-            <!-- rustdoc sidebar -->
-            <nav class="sidebar">
-                <div class="sidebar-elems"></div>
-            </nav>
         `;
 
         // Mock console.error
@@ -98,7 +67,7 @@ describe('initCrowdIn', () => {
     it('should validate platform parameter', () => {
         initCrowdIn('LizardByte', 'invalidPlatform');
         expect(console.error).toHaveBeenCalledWith(
-            'Invalid UI. Must be "dockle", "sphinx", "rustdoc", or null'
+            'Invalid UI. Must be "dockle" or "jekyll"'
         );
     });
 
@@ -236,15 +205,16 @@ describe('initCrowdIn', () => {
         );
     });
 
-    it('should not apply styling when platform is null', () => {
-        initCrowdIn('LizardByte', null);
+    it('should leave native positioning in place for Jekyll', () => {
+        const container = document.getElementById('crowdin-language-picker');
+        container.classList.add('cr-position-bottom-left');
 
-        // Simulate script loading and run the setTimeout from UI styling
+        initCrowdIn('LizardByte', 'jekyll');
+
         jest.runAllTimers();
 
-        // Verify that no styling was applied
-        const button = document.getElementsByClassName('cr-picker-button')[0];
-        expect(button.classList.contains('btn')).toBe(false);
+        expect(container.classList.contains('cr-position-bottom-left')).toBe(true);
+        expect(container.classList.contains('dockle-crowdin-picker')).toBe(false);
     });
 
     it('should apply consistent Dockle styling', () => {
@@ -272,82 +242,10 @@ describe('initCrowdIn', () => {
         expect(container.style.position).toBe('fixed');
     });
 
-    it('should apply sphinx styling', () => {
-        initCrowdIn('LizardByte', 'sphinx');
-
-        // Simulate script loading and UI styling timeout
-        jest.runAllTimers();
-
-        const container = document.getElementById('crowdin-language-picker');
-        const sidebar = document.getElementsByClassName('sidebar-sticky')[0];
-
-        expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
-        expect(container.style.position).toBe('relative');
-        expect(sidebar.contains(container)).toBe(true);
-    });
-
-    it('should apply rustdoc styling', () => {
-        initCrowdIn('LizardByte', 'rustdoc');
-
-        // Simulate script loading and UI styling timeout
-        jest.runAllTimers();
-
-        const container = document.getElementById('crowdin-language-picker');
-        const sidebar = document.getElementsByClassName('sidebar-elems')[0];
-
-        expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
-        expect(container.classList.contains('rustdoc-crowdin-picker')).toBe(true);
-        expect(container.style.position).toBe('static');
-        expect(sidebar.contains(container)).toBe(true);
-    });
-
-    it('should wait for sphinx language picker before applying styling', () => {
-        expectDelayedStyling({
-            initialMarkup: '<div class="sidebar-sticky"></div>',
-            pickerClass: null,
-            platform: 'sphinx',
-            position: 'relative',
-            sidebarClass: 'sidebar-sticky',
-        });
-    });
-
-    it('should wait for rustdoc language picker before applying styling', () => {
-        expectDelayedStyling({
-            initialMarkup: '<nav class="sidebar"><div class="sidebar-elems"></div></nav>',
-            pickerClass: 'rustdoc-crowdin-picker',
-            platform: 'rustdoc',
-            position: 'static',
-            sidebarClass: 'sidebar-elems',
-        });
-    });
-
-    it('should move rustdoc language picker to sidebar when sidebar-elems is unavailable', () => {
-        globalThis.document.body.innerHTML = `
-            <nav class="sidebar"></nav>
-            <div id="crowdin-language-picker" class="cr-position-bottom-left">
-                <div class="cr-picker-button"></div>
-                <div class="cr-picker-submenu"></div>
-            </div>
-        `;
-
-        initCrowdIn('LizardByte', 'rustdoc');
-        jest.runAllTimers();
-
-        const container = document.getElementById('crowdin-language-picker');
-        const sidebar = document.getElementsByClassName('sidebar')[0];
-
-        expect(container.classList.contains('rustdoc-crowdin-picker')).toBe(true);
-        expect(sidebar.contains(container)).toBe(true);
-    });
-
     it('should stop retrying platform styling after the retry limit', () => {
-        globalThis.document.body.innerHTML = `
-            <nav class="sidebar">
-                <div class="sidebar-elems"></div>
-            </nav>
-        `;
+        globalThis.document.body.innerHTML = '';
 
-        initCrowdIn('LizardByte', 'rustdoc');
+        initCrowdIn('LizardByte', 'dockle');
 
         jest.advanceTimersByTime(0);
         jest.advanceTimersByTime(5000);

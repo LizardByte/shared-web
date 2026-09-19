@@ -224,7 +224,7 @@ function _installCrowdinFetchInterceptor() {
 
 /**
  * Re-attempts platform styling while Crowdin inserts the language picker.
- * @param {string} platform - UI platform ('dockle', 'sphinx', or 'rustdoc').
+ * @param {string} platform - UI platform ('dockle' or 'jekyll').
  * @param {number} attempt - Current retry count.
  */
 function _retryCrowdinPlatformStyling(platform, attempt) {
@@ -239,76 +239,42 @@ function _retryCrowdinPlatformStyling(platform, attempt) {
 
 /**
  * Applies platform-specific placement after the Crowdin picker exists.
- * @param {string} platform - UI platform ('dockle', 'sphinx', or 'rustdoc').
+ * @param {string} platform - UI platform ('dockle' or 'jekyll').
  * @param {number} attempt - Current retry count.
  */
 function _applyCrowdinPlatformStyling(platform, attempt = 0) {
+    if (platform === 'jekyll') {
+        return;
+    }
+
     const container = document.getElementById('crowdin-language-picker');
 
-    if (platform === 'dockle') {
-        if (container === null) {
-            _retryCrowdinPlatformStyling(platform, attempt);
-            return;
-        }
-
-        container.classList.remove('cr-position-bottom-left');
-        container.classList.add('dockle-crowdin-picker');
-        container.style.position = 'fixed';
-        container.style.left = 'auto';
-        container.style.bottom = 'auto';
-        document.body.appendChild(container);
-        return;
-    }
-
-    if (platform === 'sphinx') {
-        const button = document.getElementsByClassName('cr-picker-button')[0];
-        const sidebar = document.getElementsByClassName('sidebar-sticky')[0];
-
-        if (container === null || button === undefined || sidebar === undefined) {
-            _retryCrowdinPlatformStyling(platform, attempt);
-            return;
-        }
-
-        container.classList.remove('cr-position-bottom-left');
-        container.style.width = button.offsetWidth + 10 + 'px';
-        container.style.position = 'relative';
-        container.style.left = '10px';
-        container.style.bottom = '10px';
-
-        // move button to related pages
-        sidebar.appendChild(container);
-        return;
-    }
-
-    const sidebar = document.querySelector('.sidebar .sidebar-elems') || document.querySelector('.sidebar');
-
-    if (container === null || sidebar === null) {
+    if (container === null) {
         _retryCrowdinPlatformStyling(platform, attempt);
         return;
     }
 
     container.classList.remove('cr-position-bottom-left');
-    container.classList.add('rustdoc-crowdin-picker');
-    container.style.position = 'static';
+    container.classList.add('dockle-crowdin-picker');
+    container.style.position = 'fixed';
     container.style.left = 'auto';
     container.style.bottom = 'auto';
-
-    sidebar.appendChild(container);
+    document.body.appendChild(container);
 }
 
 /**
  * Initializes Crowdin translation widget based on project and UI platform.
  * @param {string} project - Project name ('LizardByte' or 'LizardByte-docs').
- * @param {string|null} platform - UI platform ('dockle', 'sphinx', 'rustdoc', or null).
+ * @param {string} platform - UI platform ('dockle' or 'jekyll').
  */
-function initCrowdIn(project = 'LizardByte', platform = null) {
+function initCrowdIn(project = 'LizardByte', platform = 'jekyll') {
     // Input validation
     if (!['LizardByte', 'LizardByte-docs'].includes(project)) {
         console.error('Invalid project. Must be "LizardByte" or "LizardByte-docs"');
         return;
     }
-    if (!['dockle', 'sphinx', 'rustdoc', null].includes(platform)) {
-        console.error('Invalid UI. Must be "dockle", "sphinx", "rustdoc", or null');
+    if (!['dockle', 'jekyll'].includes(platform)) {
+        console.error('Invalid UI. Must be "dockle" or "jekyll"');
         return;
     }
 
@@ -376,10 +342,6 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
         });
 
         // Apply styling based on UI framework
-        if (platform === null) {
-            return;
-        }
-
         _applyCrowdinPlatformStyling(platform);
     });
 }

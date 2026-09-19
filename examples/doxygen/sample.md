@@ -29,8 +29,3 @@ Authored page:
 <script src="crowdin.js"></script>
 <script>initCrowdIn('LizardByte-docs', 'dockle');</script>
 @endhtmlonly
-
-<details style="display: none;">
-  <summary></summary>
-  [TOC]
-</details>
