@@ -7,14 +7,48 @@
 //!
 //! ### CrowdIn
 //!
-//! Install `@lizardbyte/shared-web`, then create the rustdoc HTML hook at
-//! `rustdoc/shared-web.html` in your crate root. The crate root is the
-//! directory that contains `Cargo.toml`, so this example stores the hook at
-//! `examples/rustdoc/rustdoc/shared-web.html`.
+//! Use either jsDelivr or an installed copy of `@lizardbyte/shared-web` in a
+//! rustdoc HTML hook such as `rustdoc/shared-web.html`.
 //!
-//! The hook loads `crowdin.js` and `crowdin-dockle-css.css` from the same
-//! directory as each generated HTML page. Dockle copies those files beside
-//! every generated `.html` file from `[targets.rustdoc].extra_files`.
+//! #### jsDelivr
+//!
+//! Load the published assets directly in the hook:
+//!
+//! ```html
+//! <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin-dockle-css.css">
+//! <script src="https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin.js"></script>
+//! <script>globalThis.initCrowdIn('LizardByte-docs', 'dockle');</script>
+//! ```
+//!
+//! Replace `latest` with a published package version for immutable URLs.
+//!
+//! #### npm
+//!
+//! Install the package:
+//!
+//! ```text
+//! npm install --save-dev @lizardbyte/shared-web --ignore-scripts
+//! ```
+//!
+//! Have Dockle copy the installed assets beside every generated rustdoc page:
+//!
+//! ```toml
+//! [targets.rustdoc]
+//! extra_files = [
+//!     "node_modules/@lizardbyte/shared-web/dist/crowdin.js",
+//!     "node_modules/@lizardbyte/shared-web/dist/crowdin-dockle-css.css",
+//! ]
+//! ```
+//!
+//! Then use the copied asset names in the hook:
+//!
+//! ```html
+//! <link rel="stylesheet" href="crowdin-dockle-css.css">
+//! <script src="crowdin.js"></script>
+//! <script>globalThis.initCrowdIn('LizardByte-docs', 'dockle');</script>
+//! ```
+//!
+//! #### Cargo configuration
 //!
 //! Configure Cargo to pass the hook to rustdoc:
 //!
@@ -24,11 +58,6 @@
 //!     "--html-after-content",
 //!     "rustdoc/shared-web.html",
 //! ]
-//! ```
-//!
-//! ```toml
-//! [targets.rustdoc]
-//! extra_files = ["dist/crowdin.js", "dist/crowdin-dockle-css.css"]
 //! ```
 
 /// Returns a greeting for the provided project name.

@@ -10,7 +10,13 @@ Widgets
 CrowdIn
 ~~~~~~~
 
-Add the following to ``dockle.toml`` to enable the CrowdIn language selector without maintaining ``conf.py``:
+Use either jsDelivr or an installed copy of ``@lizardbyte/shared-web``. Both options use the same small local
+initializer and do not require maintaining ``conf.py``.
+
+jsDelivr
+^^^^^^^^
+
+Load the published assets directly from jsDelivr:
 
 .. code-block:: toml
 
@@ -18,6 +24,30 @@ Add the following to ``dockle.toml`` to enable the CrowdIn language selector wit
    static_paths = ["docs/_static"]
    extra_stylesheets = ["https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin-dockle-css.css"]
    extra_javascript = ["https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin.js", "js/crowdin.js"]
+
+Replace ``latest`` with a published package version for immutable URLs.
+
+npm
+^^^
+
+Install the package, then expose its ``dist`` directory as a Sphinx static path:
+
+.. code-block:: bash
+
+   npm install --save-dev @lizardbyte/shared-web --ignore-scripts
+
+.. code-block:: toml
+
+   [targets.sphinx]
+   static_paths = [
+     "docs/_static",
+     "node_modules/@lizardbyte/shared-web/dist",
+   ]
+   extra_stylesheets = ["crowdin-dockle-css.css"]
+   extra_javascript = ["crowdin.js", "js/crowdin.js"]
+
+Initializer
+^^^^^^^^^^^
 
 Then create ``js/crowdin.js`` in an authored static directory:
 

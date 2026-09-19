@@ -65,3 +65,46 @@ icon filenames that contain spaces or other reserved characters.
    ```bash
    npm install @lizardbyte/shared-web --ignore-scripts
    ```
+
+## CrowdIn in JSDoc
+
+Create an initializer such as `docs/crowdin-init.js`:
+
+```javascript
+globalThis.initCrowdIn('LizardByte-docs', 'dockle');
+```
+
+Then configure Dockle to load the CrowdIn assets from either jsDelivr or the installed npm package.
+
+### jsDelivr
+
+```toml
+[targets.jsdoc]
+extra_files = ["docs/crowdin-init.js"]
+extra_stylesheets = ["https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin-dockle-css.css"]
+extra_javascript = [
+  "https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin.js",
+  "crowdin-init.js",
+]
+```
+
+Replace `latest` with a published package version for immutable URLs.
+
+### npm
+
+Install the package, then configure Dockle to copy and load its assets:
+
+```bash
+npm install --save-dev @lizardbyte/shared-web --ignore-scripts
+```
+
+```toml
+[targets.jsdoc]
+extra_files = [
+  "node_modules/@lizardbyte/shared-web/dist/crowdin.js",
+  "node_modules/@lizardbyte/shared-web/dist/crowdin-dockle-css.css",
+  "docs/crowdin-init.js",
+]
+extra_stylesheets = ["crowdin-dockle-css.css"]
+extra_javascript = ["crowdin.js", "crowdin-init.js"]
+```
