@@ -11,16 +11,18 @@ build:
     python: "miniconda-latest"
     ruby: "3.3"
     rust: "1.91"
-  commands:
-    - |
-      if [ -f readthedocs_build.sh ]; then
-        dockle_dir="."
-      else
-        dockle_dir="./third-party/dockle"
-      fi
-      chmod +x "${dockle_dir}/readthedocs_build.sh"
-      export DOCKLE_DIR="${dockle_dir}"
-      "${dockle_dir}/readthedocs_build.sh"
+  jobs:
+    build:
+      html:
+        - |
+          if [ -f readthedocs_build.sh ]; then
+            dockle_dir="."
+          else
+            dockle_dir="./third-party/dockle"
+          fi
+          chmod +x "${dockle_dir}/readthedocs_build.sh"
+          export DOCKLE_DIR="${dockle_dir}"
+          "${dockle_dir}/readthedocs_build.sh"
 
 conda:
   environment: third-party/dockle/environment.yml
