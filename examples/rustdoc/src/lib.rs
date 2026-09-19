@@ -7,8 +7,8 @@
 //!
 //! ### CrowdIn
 //!
-//! Install `@lizardbyte/shared-web` with npm, then create the rustdoc HTML
-//! hook at `rustdoc/shared-web.html` in your crate root. The crate root is the
+//! Install `@lizardbyte/shared-web`, then create the rustdoc HTML hook at
+//! `rustdoc/shared-web.html` in your crate root. The crate root is the
 //! directory that contains `Cargo.toml`, so this example stores the hook at
 //! `examples/rustdoc/rustdoc/shared-web.html`.
 //!
@@ -28,10 +28,7 @@
 //!
 //! ```toml
 //! [targets.rustdoc]
-//! extra_files = [
-//!     "node_modules/@lizardbyte/shared-web/dist/crowdin.js",
-//!     "node_modules/@lizardbyte/shared-web/dist/crowdin-dockle-css.css",
-//! ]
+//! extra_files = ["dist/crowdin.js", "dist/crowdin-dockle-css.css"]
 //! ```
 
 /// Returns a greeting for the provided project name.
