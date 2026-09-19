@@ -12,7 +12,7 @@
 //! directory that contains `Cargo.toml`, so this example stores the hook at
 //! `examples/rustdoc/rustdoc/shared-web.html`.
 //!
-//! The hook loads `crowdin.js` and `crowdin-rustdoc-css.css` from the same
+//! The hook loads `crowdin.js` and `crowdin-dockle-css.css` from the same
 //! directory as each generated HTML page. Dockle copies those files beside
 //! every generated `.html` file from `[targets.rustdoc].extra_files`.
 //!
@@ -28,7 +28,7 @@
 //!
 //! ```toml
 //! [targets.rustdoc]
-//! extra_files = ["dist/crowdin.js", "dist/crowdin-rustdoc-css.css"]
+//! extra_files = ["dist/crowdin.js", "dist/crowdin-dockle-css.css"]
 //! ```
 
 /// Returns a greeting for the provided project name.

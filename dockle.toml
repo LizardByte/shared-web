@@ -17,6 +17,7 @@ name = "jsdoc"
 title = "shared-web JavaScript API"
 framework = "jsdoc"
 source = "src"
+home = true
 
 [targets.jsdoc]
 inputs = ["src"]
@@ -32,7 +33,7 @@ entry = "sample.md"
 
 [targets.doxygen]
 inputs = ["examples/doxygen/sample.md"]
-extra_stylesheets = ["dist/crowdin-doxygen-css.css"]
+extra_stylesheets = ["dist/crowdin-dockle-css.css"]
 extra_files = ["dist/crowdin.js"]
 main_page = "examples/doxygen/sample.md"
 
@@ -44,7 +45,7 @@ source = "examples/sphinx/source"
 
 [targets.sphinx]
 static_paths = ["examples/sphinx/source/_static", "dist"]
-extra_stylesheets = ["crowdin-furo-css.css"]
+extra_stylesheets = ["crowdin-dockle-css.css"]
 extra_javascript = ["crowdin.js", "js/crowdin.js"]
 
 [[targets]]
@@ -54,4 +55,4 @@ framework = "rustdoc"
 source = "examples/rustdoc"
 
 [targets.rustdoc]
-extra_files = ["dist/crowdin.js", "dist/crowdin-rustdoc-css.css"]
+extra_files = ["dist/crowdin.js", "dist/crowdin-dockle-css.css"]

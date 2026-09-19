@@ -97,7 +97,9 @@ describe('initCrowdIn', () => {
 
     it('should validate platform parameter', () => {
         initCrowdIn('LizardByte', 'invalidPlatform');
-        expect(console.error).toHaveBeenCalledWith('Invalid UI. Must be "sphinx", "rustdoc", or null');
+        expect(console.error).toHaveBeenCalledWith(
+            'Invalid UI. Must be "dockle", "sphinx", "rustdoc", or null'
+        );
     });
 
     it('should initialize proxyTranslator with LizardByte settings', () => {
@@ -243,6 +245,31 @@ describe('initCrowdIn', () => {
         // Verify that no styling was applied
         const button = document.getElementsByClassName('cr-picker-button')[0];
         expect(button.classList.contains('btn')).toBe(false);
+    });
+
+    it('should apply consistent Dockle styling', () => {
+        initCrowdIn('LizardByte', 'dockle');
+        jest.runAllTimers();
+
+        const container = document.getElementById('crowdin-language-picker');
+
+        expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
+        expect(container.classList.contains('dockle-crowdin-picker')).toBe(true);
+        expect(container.style.position).toBe('fixed');
+        expect(document.body.lastElementChild).toBe(container);
+    });
+
+    it('should wait for the Dockle language picker before applying styling', () => {
+        globalThis.document.body.innerHTML = '';
+
+        initCrowdIn('LizardByte', 'dockle');
+        jest.advanceTimersByTime(0);
+        globalThis.document.body.insertAdjacentHTML('beforeend', delayedPickerMarkup);
+        jest.advanceTimersByTime(50);
+
+        const container = document.getElementById('crowdin-language-picker');
+        expect(container.classList.contains('dockle-crowdin-picker')).toBe(true);
+        expect(container.style.position).toBe('fixed');
     });
 
     it('should apply sphinx styling', () => {

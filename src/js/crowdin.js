@@ -224,7 +224,7 @@ function _installCrowdinFetchInterceptor() {
 
 /**
  * Re-attempts platform styling while Crowdin inserts the language picker.
- * @param {string} platform - UI platform ('sphinx' or 'rustdoc').
+ * @param {string} platform - UI platform ('dockle', 'sphinx', or 'rustdoc').
  * @param {number} attempt - Current retry count.
  */
 function _retryCrowdinPlatformStyling(platform, attempt) {
@@ -239,11 +239,26 @@ function _retryCrowdinPlatformStyling(platform, attempt) {
 
 /**
  * Applies platform-specific placement after the Crowdin picker exists.
- * @param {string} platform - UI platform ('sphinx' or 'rustdoc').
+ * @param {string} platform - UI platform ('dockle', 'sphinx', or 'rustdoc').
  * @param {number} attempt - Current retry count.
  */
 function _applyCrowdinPlatformStyling(platform, attempt = 0) {
     const container = document.getElementById('crowdin-language-picker');
+
+    if (platform === 'dockle') {
+        if (container === null) {
+            _retryCrowdinPlatformStyling(platform, attempt);
+            return;
+        }
+
+        container.classList.remove('cr-position-bottom-left');
+        container.classList.add('dockle-crowdin-picker');
+        container.style.position = 'fixed';
+        container.style.left = 'auto';
+        container.style.bottom = 'auto';
+        document.body.appendChild(container);
+        return;
+    }
 
     if (platform === 'sphinx') {
         const button = document.getElementsByClassName('cr-picker-button')[0];
@@ -284,7 +299,7 @@ function _applyCrowdinPlatformStyling(platform, attempt = 0) {
 /**
  * Initializes Crowdin translation widget based on project and UI platform.
  * @param {string} project - Project name ('LizardByte' or 'LizardByte-docs').
- * @param {string|null} platform - UI platform ('sphinx', 'rustdoc', or null).
+ * @param {string|null} platform - UI platform ('dockle', 'sphinx', 'rustdoc', or null).
  */
 function initCrowdIn(project = 'LizardByte', platform = null) {
     // Input validation
@@ -292,8 +307,8 @@ function initCrowdIn(project = 'LizardByte', platform = null) {
         console.error('Invalid project. Must be "LizardByte" or "LizardByte-docs"');
         return;
     }
-    if (!['sphinx', 'rustdoc', null].includes(platform)) {
-        console.error('Invalid UI. Must be "sphinx", "rustdoc", or null');
+    if (!['dockle', 'sphinx', 'rustdoc', null].includes(platform)) {
+        console.error('Invalid UI. Must be "dockle", "sphinx", "rustdoc", or null');
         return;
     }
 

@@ -16,14 +16,14 @@ Add the following to ``dockle.toml`` to enable the CrowdIn language selector wit
 
    [targets.sphinx]
    static_paths = ["docs/_static", "dist"]
-   extra_stylesheets = ["crowdin-furo-css.css"]
+   extra_stylesheets = ["crowdin-dockle-css.css"]
    extra_javascript = ["crowdin.js", "js/crowdin.js"]
 
 Then create ``js/crowdin.js`` in an authored static directory:
 
 .. code-block:: javascript
 
-   window.initCrowdIn('LizardByte-docs', 'sphinx')
+   window.initCrowdIn('LizardByte-docs', 'dockle')
 
 Whitespace restoration example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
