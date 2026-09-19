@@ -1,36 +1,32 @@
 ---
+# .readthedocs.yaml
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
 version: 2
 build:
   os: "ubuntu-24.04"
   tools:
     nodejs: "22"
-    python: "3.13"
+    python: "miniconda-latest"
     ruby: "3.3"
     rust: "1.91"
-  commands:
-    - 'echo "output directory: ${READTHEDOCS_OUTPUT}html"'
-    # shared-web build
-    - npm ci --ignore-scripts
-    - npm run build
-    - mkdir -p ${READTHEDOCS_OUTPUT}html/dist
-    - cp -r dist/* ${READTHEDOCS_OUTPUT}html/dist
-    # jsdoc build
-    - npm run generate-docs
-    # jekyll example build
-    - 'echo "baseurl: projects/shared-web/$READTHEDOCS_VERSION"/jekyll >> ./examples/jekyll/_config.yml'
-    - cd examples/jekyll && npm ci  # we need to include scripts for postinstall actions
-    - cd examples/jekyll && npm run build
-    # doxygen example build
-    - cd examples/doxygen && npm ci --ignore-scripts
-    - cd examples/doxygen && npm run build
-    # sphinx example build
-    - cd examples/sphinx && npm ci  # we need to include scripts for postinstall actions
-    - cd examples/sphinx && npm run build
-    - cd examples/sphinx && npm run lint
-    # rustdoc example build
-    - cd examples/rustdoc && npm ci --ignore-scripts
-    - cd examples/rustdoc && npm run build
-    - mkdir -p ${READTHEDOCS_OUTPUT}html/rustdoc
-    - cp -r examples/rustdoc/build/html/rustdoc/* ${READTHEDOCS_OUTPUT}html/rustdoc/
-    # debug output
-    - cd ${READTHEDOCS_OUTPUT}html && ls -la -R
+  jobs:
+    build:
+      html:
+        - |
+          if [ -f readthedocs_build.sh ]; then
+            dockle_dir="."
+          else
+            dockle_dir="./third-party/dockle"
+          fi
+          chmod +x "${dockle_dir}/readthedocs_build.sh"
+          export DOCKLE_DIR="${dockle_dir}"
+          "${dockle_dir}/readthedocs_build.sh"
+
+conda:
+  environment: third-party/dockle/environment.yml
+
+submodules:
+  include: all
+  recursive: true

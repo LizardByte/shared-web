@@ -1,0 +1,42 @@
+#crowdin-language-picker.dockle-crowdin-picker {
+  bottom: 1rem !important;
+  left: var(--dockle-sidebar-padding, 1.25rem) !important;
+  position: fixed !important;
+  width: calc(var(--dockle-sidebar-width, 18rem) - (2 * var(--dockle-sidebar-padding, 1.25rem))) !important;
+  z-index: 200;
+}
+
+#crowdin-language-picker.dockle-crowdin-picker .cr-picker-button {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#crowdin-language-picker .cr-picker-button,
+#crowdin-language-picker .cr-picker-submenu {
+  background-color: var(--dockle-background-secondary) !important;
+  border: 1px solid var(--dockle-border) !important;
+  border-radius: var(--dockle-radius) !important;
+  color: var(--dockle-content) !important;
+}
+
+#crowdin-language-picker .cr-picker-button:hover,
+#crowdin-language-picker .cr-picker-submenu > a:hover {
+  background-color: var(--dockle-primary) !important;
+  color: white !important;
+}
+
+#crowdin-language-picker .cr-picker-submenu > a {
+  color: var(--dockle-content) !important;
+}
+
+#crowdin-language-picker .cr-picker-submenu > a.cr-selected {
+  color: var(--dockle-primary) !important;
+}
+
+@media (max-width: 50rem) {
+  #crowdin-language-picker.dockle-crowdin-picker {
+    bottom: 1rem !important;
+    left: 1rem !important;
+    width: min(18rem, calc(100vw - 2rem)) !important;
+  }
+}

@@ -1,8 +1,8 @@
 shared-web Sphinx sample
 ========================
 
-This is a sample project for Sphinx with Furo theme. This project allows you to visualize how the
-widgets appear in Sphinx documentation.
+This is a Sphinx project built and themed by Dockle. It allows you to visualize how the widgets appear in Sphinx
+documentation.
 
 Widgets
 -------
@@ -10,23 +10,50 @@ Widgets
 CrowdIn
 ~~~~~~~
 
-Add the following to the Sphinx configuration file to enable the CrowdIn language selector:
+Use either jsDelivr or an installed copy of ``@lizardbyte/shared-web``. Both options use the same small local
+initializer and do not require maintaining ``conf.py``.
 
-.. code-block:: python
+jsDelivr
+^^^^^^^^
 
-   html_css_files = [
-       'https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin-furo-css.css',
+Load the published assets directly from jsDelivr:
+
+.. code-block:: toml
+
+   [targets.sphinx]
+   static_paths = ["docs/_static"]
+   extra_stylesheets = ["https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin-dockle-css.css"]
+   extra_javascript = ["https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin.js", "js/crowdin.js"]
+
+Replace ``latest`` with a published package version for immutable URLs.
+
+npm
+^^^
+
+Install the package, then expose its ``dist`` directory as a Sphinx static path:
+
+.. code-block:: bash
+
+   npm install --save-dev @lizardbyte/shared-web --ignore-scripts
+
+.. code-block:: toml
+
+   [targets.sphinx]
+   static_paths = [
+     "docs/_static",
+     "node_modules/@lizardbyte/shared-web/dist",
    ]
-   html_js_files = [
-       'https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin.js',
-       'js/crowdin.js',  # initialize crowdin language selector
-   ]
+   extra_stylesheets = ["crowdin-dockle-css.css"]
+   extra_javascript = ["crowdin.js", "js/crowdin.js"]
 
-Then create a file named ``js/crowdin.js`` located in the ``html_static_path`` directory, with the following content:
+Initializer
+^^^^^^^^^^^
+
+Then create ``js/crowdin.js`` in an authored static directory:
 
 .. code-block:: javascript
 
-   window.initCrowdIn('LizardByte-docs', 'sphinx')
+   window.initCrowdIn('LizardByte-docs', 'dockle')
 
 Whitespace restoration example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
