@@ -50,6 +50,7 @@ framework = "sphinx"
 source = "examples/sphinx/source"
 
 [targets.sphinx]
+source_edit_link = "https://github.com/LizardByte/shared-web/blob/master/examples/sphinx/source/{filename}"
 static_paths = ["examples/sphinx/source/_static", "dist"]
 extra_stylesheets = ["crowdin-dockle-css.css"]
 extra_javascript = ["crowdin.js", "js/crowdin.js"]
