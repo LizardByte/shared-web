@@ -7,7 +7,7 @@ version: 2
 build:
   os: "ubuntu-24.04"
   tools:
-    nodejs: "22"
+    nodejs: "24"
     python: "miniconda-latest"
     ruby: "3.3"
     rust: "1.91"
