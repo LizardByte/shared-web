@@ -1,33 +1,59 @@
 # shared-web Doxygen sample
 
-This is a sample project for Doxygen with doxygen-awesome-css theme. This project allows you to visualize how the
-widgets appear in Doxygen documentation.
-
-This will be automatically enabled in our [doxyconfig](https://github.com/LizardByte/doxyconfig) repo.
+This is a sample project for Doxygen with Dockle. It allows you to visualize how shared-web widgets appear in
+Doxygen documentation while Dockle owns the generated Doxyfile and theme.
 
 ## Widgets
 
-You can include widgets in your Doxygen documentation by adding the following to your
-Doxyfile (or Doxygen configuration file). You may need to adjust the paths depending on your project structure.
+You can load the shared assets from jsDelivr or install the npm package. You may
+need to adjust local paths depending on your project structure.
 
 ### CrowdIn
 
-Doxyfile:
-```doxygen
-HTML_EXTRA_FILES += ../node_modules/@lizardbyte/shared-web/dist/crowdin.js
-HTML_EXTRA_STYLESHEET += ../node_modules/@lizardbyte/shared-web/dist/crowdin-doxygen-css.css
+Use either jsDelivr or an installed copy of `@lizardbyte/shared-web`.
+
+#### jsDelivr
+
+Add the remote assets and initializer to the authored page:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin-dockle-css.css"
+>
+<script src="https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@latest/dist/crowdin.js"></script>
+<script>initCrowdIn('LizardByte-docs', 'dockle');</script>
 ```
 
-header.html:
+Replace `latest` with a published package version for immutable URLs.
+
+#### npm
+
+Install the package:
+
+```bash
+npm install --save-dev @lizardbyte/shared-web --ignore-scripts
+```
+
+Doxygen's native extra-asset hooks require local files, so point `dockle.toml`
+at the installed package:
+
+```toml
+[targets.doxygen]
+extra_files = ["node_modules/@lizardbyte/shared-web/dist/crowdin.js"]
+extra_stylesheets = ["node_modules/@lizardbyte/shared-web/dist/crowdin-dockle-css.css"]
+```
+
+Then initialize CrowdIn in the authored page:
+
 ```html
-<!--LIZARDBYTE/SHARED-WEB START-->
-<script type="text/javascript" src="$relpath^crowdin.js"></script>
+<script src="crowdin.js"></script>
 <script type="text/javascript">
-    initCrowdIn('LizardByte-docs', null);
+  initCrowdIn('LizardByte-docs', 'dockle');
 </script>
 ```
 
-<details style="display: none;">
-  <summary></summary>
-  [TOC]
-</details>
+@htmlonly
+<script src="crowdin.js"></script>
+<script>initCrowdIn('LizardByte-docs', 'dockle');</script>
+@endhtmlonly

@@ -5,11 +5,14 @@ export default [
   pluginJs.configs.recommended,
   {
     ignores: [
+        ".dockle/**", // generated Dockle work files
         "_readthedocs/**", // generated ReadTheDocs HTML
+        "_site/**", // generated Dockle site
         "coverage/**",
         "dist/**",
         "docs/**", // generated JSDoc output
         "examples/**/build/**", // generated example output
+        "third-party/**", // vendored dependencies
     ],
   },
   {
