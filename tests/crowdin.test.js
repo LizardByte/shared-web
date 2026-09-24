@@ -9,12 +9,13 @@ import {
 
 // We need to mock the module BEFORE importing the module that uses it
 jest.mock('../src/js/load-script', () => {
-    return function(url, callback) {
+    return jest.fn(function(url, callback) {
         if (callback) setTimeout(callback, 0);
         return true;
-    };
+    });
 });
 
+const loadScript = require('../src/js/load-script');
 const initCrowdIn = require('../src/js/crowdin');
 
 const delayedPickerMarkup = `
@@ -69,6 +70,37 @@ describe('initCrowdIn', () => {
         expect(console.error).toHaveBeenCalledWith(
             'Invalid UI. Must be "dockle" or "jekyll"'
         );
+    });
+
+    it('should request Crowdin only after the page load event', () => {
+        const readyState = jest.spyOn(document, 'readyState', 'get').mockReturnValue('loading');
+
+        try {
+            initCrowdIn();
+            expect(loadScript).not.toHaveBeenCalled();
+
+            globalThis.dispatchEvent(new Event('load'));
+            expect(loadScript).not.toHaveBeenCalled();
+
+            jest.advanceTimersByTime(0);
+            expect(loadScript).toHaveBeenCalledTimes(1);
+            expect(loadScript).toHaveBeenCalledWith(
+                'https://website-translator.app.crowdin.net/assets/proxy-translator.js',
+                expect.any(Function)
+            );
+            jest.runAllTimers();
+            expect(globalThis.proxyTranslator.init).toHaveBeenCalled();
+        } finally {
+            readyState.mockRestore();
+        }
+    });
+
+    it('should leave the docs usable if the Crowdin script fails', () => {
+        loadScript.mockImplementationOnce((url, callback) => callback(new Error('Crowdin unavailable')));
+
+        initCrowdIn();
+
+        expect(globalThis.proxyTranslator.init).not.toHaveBeenCalled();
     });
 
     it('should initialize proxyTranslator with LizardByte settings', () => {
@@ -188,6 +220,32 @@ describe('initCrowdIn', () => {
         await Promise.resolve();
 
         expect(translated.textContent).toBe('Use this link here.');
+    });
+
+    it('should not fight another observer over translated whitespace', async () => {
+        globalThis.document.body.innerHTML = '<p>Use <a href="#">this link</a> here.</p>';
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
+        const text = document.querySelector('a').previousSibling;
+        options.callback();
+
+        let rewrites = 0;
+        const translatorObserver = new MutationObserver(() => {
+            if (text.data.endsWith(' ') && rewrites < 10) {
+                rewrites++;
+                text.data = text.data.trimEnd();
+            }
+        });
+        translatorObserver.observe(document.body, { characterData: true, subtree: true });
+
+        text.data = text.data.trimEnd();
+        for (let i = 0; i < 10; i++) await Promise.resolve();
+        translatorObserver.disconnect();
+
+        expect(rewrites).toBe(1);
     });
 
     it('should initialize proxyTranslator with LizardByte-docs settings', () => {
