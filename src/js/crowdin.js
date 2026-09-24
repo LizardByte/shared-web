@@ -76,7 +76,9 @@ function _getTrailingWhitespace(text) {
  *     trailingWhitespace: string,
  *     previousInline: Element|null,
  *     nextInline: Element|null,
- *     whitespaceOnly: boolean
+ *     whitespaceOnly: boolean,
+ *     lastRestoredNode: Text|null,
+ *     lastRestoredFrom: string|null
  * }>} Recorded text-node boundaries.
  */
 function _captureCrowdinWhitespaceBoundaries() {
@@ -102,6 +104,8 @@ function _captureCrowdinWhitespaceBoundaries() {
                 previousInline,
                 nextInline,
                 whitespaceOnly: node.data.trim() === '',
+                lastRestoredNode: null,
+                lastRestoredFrom: null,
             });
         }
 
@@ -152,6 +156,9 @@ function _restoreCrowdinWhitespaceBoundaries(boundaries) {
     boundaries.forEach((boundary) => {
         const node = _resolveCrowdinWhitespaceNode(boundary);
         if (node === null) return;
+        if (boundary.lastRestoredNode === node && boundary.lastRestoredFrom === node.data) return;
+
+        const originalText = node.data;
 
         const currentLeadingWhitespace = _getLeadingWhitespace(node.data);
         if (boundary.leading && currentLeadingWhitespace !== boundary.leadingWhitespace) {
@@ -161,6 +168,12 @@ function _restoreCrowdinWhitespaceBoundaries(boundaries) {
         if (boundary.trailing && currentTrailingWhitespace !== boundary.trailingWhitespace) {
             const translatedTextEnd = node.data.length - currentTrailingWhitespace.length;
             node.data = node.data.slice(0, translatedTextEnd) + boundary.trailingWhitespace;
+        }
+        if (node.data !== originalText) {
+            // A translator may observe this correction and remove the same
+            // whitespace again. Do not repeat the correction indefinitely.
+            boundary.lastRestoredNode = node;
+            boundary.lastRestoredFrom = originalText;
         }
     });
 }
@@ -282,7 +295,9 @@ function initCrowdIn(project = 'LizardByte', platform = 'jekyll') {
     // before the script is even loaded so every fetch() it makes is intercepted.
     _installCrowdinFetchInterceptor();
 
-    loadScript('https://website-translator.app.crowdin.net/assets/proxy-translator.js', function() {
+    function initializeCrowdin(error) {
+        if (error) return;
+
         // Configure base settings based on project
         const projectSettings = {
             'LizardByte': {
@@ -343,7 +358,21 @@ function initCrowdIn(project = 'LizardByte', platform = 'jekyll') {
 
         // Apply styling based on UI framework
         _applyCrowdinPlatformStyling(platform);
-    });
+    }
+
+    function loadCrowdinScript() {
+        loadScript('https://website-translator.app.crowdin.net/assets/proxy-translator.js', initializeCrowdin);
+    }
+
+    // A pending third-party script delays the browser's load event. Let the
+    // documentation finish loading before requesting Crowdin.
+    if (document.readyState === 'complete') {
+        loadCrowdinScript();
+    } else {
+        globalThis.addEventListener('load', function() {
+            globalThis.setTimeout(loadCrowdinScript, 0);
+        }, { once: true });
+    }
 }
 
 // Expose to the global scope
