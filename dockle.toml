@@ -27,8 +27,8 @@ inputs = ["src"]
 readme = "README.md"
 include_pattern = '.+\.js$'
 extra_files = ["dist/crowdin.js", "dist/crowdin-dockle-css.css", "examples/jsdoc/crowdin-init.js"]
-extra_stylesheets = ["crowdin-dockle-css.css"]
-extra_javascript = ["crowdin.js", "crowdin-init.js"]
+extra_stylesheets = ["dist/crowdin-dockle-css.css"]
+extra_javascript = ["dist/crowdin.js", "examples/jsdoc/crowdin-init.js"]
 
 [[targets]]
 name = "doxygen"
