@@ -9,6 +9,7 @@ const loadScript = require('./load-script');
  * @type {string}
  */
 const CROWDIN_DIST_MIRROR = 'https://cdn.jsdelivr.net/gh/LizardByte/i18n@dist';
+const CROWDIN_CODE_BLOCK_CLASS = 'crowdin-ignore-code';
 const CROWDIN_PLATFORM_STYLING_MAX_ATTEMPTS = 100;
 const CROWDIN_PLATFORM_STYLING_RETRY_DELAY_MS = 50;
 const CROWDIN_INLINE_ELEMENT_SELECTOR = [
@@ -200,6 +201,18 @@ function _createCrowdinTranslationCallback(boundaries) {
 }
 
 /**
+ * Keeps preformatted examples out of Crowdin's text-node rewriting. Syntax
+ * highlighters can replace their children after translation starts, leaving
+ * the whitespace boundary snapshots pointing at detached nodes.
+ */
+function _excludeCrowdinCodeBlocks() {
+    document.querySelectorAll('pre, .fragment').forEach((block) => {
+        block.classList.add(CROWDIN_CODE_BLOCK_CLASS);
+        block.setAttribute('translate', 'no');
+    });
+}
+
+/**
  * Monkey-patches globalThis.fetch to redirect Crowdin distribution requests to
  * the self-hosted GitHub Pages mirror.
  *
@@ -341,11 +354,13 @@ function initCrowdIn(project = 'LizardByte', platform = 'jekyll') {
         let currentBaseUrl = globalThis.location.origin;
 
         // Initialize Crowdin translator
+        _excludeCrowdinCodeBlocks();
         const whitespaceBoundaries = _captureCrowdinWhitespaceBoundaries();
 
         globalThis.proxyTranslator.init({
             baseUrl: currentBaseUrl,
             callback: _createCrowdinTranslationCallback(whitespaceBoundaries),
+            crawlerIgnoreClasses: [CROWDIN_CODE_BLOCK_CLASS],
             distribution: projectSettings[project].distribution,
             defaultLanguage: "en",
             languageTitles: languageTitles,

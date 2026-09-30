@@ -128,6 +128,7 @@ describe('initCrowdIn', () => {
         expect(Object.keys(options).sort()).toEqual([
             'baseUrl',
             'callback',
+            'crawlerIgnoreClasses',
             'defaultLanguage',
             'distribution',
             'languageRoutingMethod',
@@ -136,6 +137,37 @@ describe('initCrowdIn', () => {
             'poweredBy',
             'showDefaultLanguageInUrl',
             'submenuPosition',
+        ]);
+    });
+
+    it('should exclude code blocks before Crowdin scans highlighted content', () => {
+        globalThis.document.body.innerHTML = [
+            '<p>Run <code>sudo modprobe uhid</code> first.</p>',
+            '<div class="fragment"><div class="line">sudo modprobe uhid</div></div>',
+            '<pre>sudo usermod -aG input $USER</pre>',
+        ].join('');
+
+        globalThis.proxyTranslator.init.mockImplementation(() => {
+            const fragment = document.querySelector('.fragment');
+            const pre = document.querySelector('pre');
+
+            expect(fragment.classList.contains('crowdin-ignore-code')).toBe(true);
+            expect(pre.classList.contains('crowdin-ignore-code')).toBe(true);
+            expect(fragment.getAttribute('translate')).toBe('no');
+            expect(pre.getAttribute('translate')).toBe('no');
+            expect(document.querySelector('p code').hasAttribute('translate')).toBe(false);
+            expect(document.querySelector('p code').classList.contains('crowdin-ignore-code')).toBe(false);
+
+            fragment.innerHTML = '<code><span>sudo</span> modprobe uhid</code>';
+            expect(fragment.querySelector('code').closest('.crowdin-ignore-code')).toBe(fragment);
+        });
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        expect(globalThis.proxyTranslator.init).toHaveBeenCalledTimes(1);
+        expect(globalThis.proxyTranslator.init.mock.calls[0][0].crawlerIgnoreClasses).toEqual([
+            'crowdin-ignore-code',
         ]);
     });
 
