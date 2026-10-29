@@ -19,7 +19,8 @@ const loadScript = require('../src/js/load-script');
 const initCrowdIn = require('../src/js/crowdin');
 
 const delayedPickerMarkup = `
-    <div id="crowdin-language-picker" class="cr-position-bottom-left">
+    <div id="crowdin-language-picker" class="cr-position-bottom-left"
+         style="position: absolute; left: auto; bottom: auto;">
         <div class="cr-picker-button"></div>
         <div class="cr-picker-submenu"></div>
     </div>
@@ -308,14 +309,18 @@ describe('initCrowdIn', () => {
     });
 
     it('should apply consistent Dockle styling', () => {
+        const container = document.getElementById('crowdin-language-picker');
+        container.style.cssText = 'position: absolute; left: auto; bottom: auto; top: 2px;';
+
         initCrowdIn('LizardByte', 'dockle');
         jest.runAllTimers();
 
-        const container = document.getElementById('crowdin-language-picker');
-
         expect(container.classList.contains('cr-position-bottom-left')).toBe(false);
         expect(container.classList.contains('dockle-crowdin-picker')).toBe(true);
-        expect(container.style.position).toBe('fixed');
+        expect(container.style.position).toBe('');
+        expect(container.style.left).toBe('');
+        expect(container.style.bottom).toBe('');
+        expect(container.style.top).toBe('2px');
         expect(document.body.lastElementChild).toBe(container);
     });
 
@@ -329,7 +334,9 @@ describe('initCrowdIn', () => {
 
         const container = document.getElementById('crowdin-language-picker');
         expect(container.classList.contains('dockle-crowdin-picker')).toBe(true);
-        expect(container.style.position).toBe('fixed');
+        expect(container.style.position).toBe('');
+        expect(container.style.left).toBe('');
+        expect(container.style.bottom).toBe('');
     });
 
     it('should stop retrying platform styling after the retry limit', () => {
