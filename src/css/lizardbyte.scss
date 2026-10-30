@@ -158,8 +158,10 @@ iframe.feedback {
     overflow: hidden;
 }
 
-.hover-zoom img {
-    transition: transform 1.5s ease;
+@media (prefers-reduced-motion: no-preference) {
+    .hover-zoom img {
+        transition: transform 1.5s ease;
+    }
 }
 
 .hover-zoom:hover img {
