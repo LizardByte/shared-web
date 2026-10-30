@@ -1,20 +1,21 @@
-#crowdin-language-picker .cr-picker-button,
-#crowdin-language-picker .cr-picker-submenu {
-  background-color: var(--navbar-col) !important;
-  border: 1px solid var(--navbar-border-col) !important;
-  color: var(--navbar-text-col) !important;
+// Outrank Crowdin's injected state selectors regardless of stylesheet order.
+body #crowdin-language-picker.cr-position-bottom-left .cr-picker-button,
+body #crowdin-language-picker.cr-position-bottom-left .cr-picker-submenu {
+  background-color: var(--navbar-col);
+  border: 1px solid var(--navbar-border-col);
+  color: var(--navbar-text-col);
 }
 
-#crowdin-language-picker .cr-picker-button:hover,
-#crowdin-language-picker .cr-picker-submenu > a:hover {
-  background-color: var(--navbar-text-col) !important;
-  color: var(--navbar-col) !important;
+body #crowdin-language-picker.cr-position-bottom-left .cr-picker-button:hover,
+body #crowdin-language-picker.cr-position-bottom-left .cr-picker-submenu > a:hover {
+  background-color: var(--navbar-text-col);
+  color: var(--navbar-col);
 }
 
-#crowdin-language-picker .cr-picker-submenu > a {
-  color: var(--navbar-text-col) !important;
+body #crowdin-language-picker.cr-position-bottom-left .cr-picker-submenu > a {
+  color: var(--navbar-text-col);
 }
 
-#crowdin-language-picker .cr-picker-submenu > a.cr-selected {
-  color: var(--navbar-border-col) !important;
+body #crowdin-language-picker.cr-position-bottom-left .cr-picker-submenu > a.cr-selected {
+  color: var(--navbar-border-col);
 }

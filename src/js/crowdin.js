@@ -282,9 +282,10 @@ function _applyCrowdinPlatformStyling(platform, attempt = 0) {
 
     container.classList.remove('cr-position-bottom-left');
     container.classList.add('dockle-crowdin-picker');
-    container.style.position = 'fixed';
-    container.style.left = 'auto';
-    container.style.bottom = 'auto';
+    // Let the Dockle stylesheet control desktop and mobile positioning.
+    container.style.removeProperty('position');
+    container.style.removeProperty('left');
+    container.style.removeProperty('bottom');
     document.body.appendChild(container);
 }
 
