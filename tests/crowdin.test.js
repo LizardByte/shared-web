@@ -46,6 +46,11 @@ describe('initCrowdIn', () => {
             init: jest.fn()
         };
 
+        globalThis.i18nextify = {
+            i18next: { use: jest.fn() },
+            init: jest.fn(),
+        };
+
         // Use fake timers to control setTimeout
         jest.useFakeTimers();
 
@@ -128,7 +133,6 @@ describe('initCrowdIn', () => {
         const options = globalThis.proxyTranslator.init.mock.calls[0][0];
         expect(Object.keys(options).sort()).toEqual([
             'baseUrl',
-            'callback',
             'crawlerIgnoreClasses',
             'defaultLanguage',
             'distribution',
@@ -172,113 +176,131 @@ describe('initCrowdIn', () => {
         ]);
     });
 
-    it('should restore whitespace around translated inline elements', () => {
-        globalThis.document.body.innerHTML = `
-            <p id="translated">
-                GitHub <em>Discussions</em> are available. <strong>Yearly:</strong> <strong>$14.99</strong>, billed.
-            </p>
-            <p id="detached">Before <i>removed</i></p>
-            <p id="next-anchor"><i>gone</i> <strong>kept</strong></p>
-            <p id="no-anchor"><i>gone</i> <strong>also gone</strong></p>
-        `;
-
-        initCrowdIn();
-        jest.runAllTimers();
-
-        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
-        const translated = globalThis.document.getElementById('translated');
-        const emphasis = translated.querySelector('em');
-        const strongElements = translated.querySelectorAll('strong');
-        const detachedBoundary = globalThis.document.querySelector('#detached i').previousSibling;
-        const nextAnchor = globalThis.document.getElementById('next-anchor');
-        const nextAnchorWhitespace = nextAnchor.querySelector('i').nextSibling;
-        const noAnchor = globalThis.document.getElementById('no-anchor');
-
-        emphasis.previousSibling.replaceWith(document.createTextNode('GitHub'));
-        emphasis.nextSibling.replaceWith(document.createTextNode('are available. '));
-        strongElements[0].nextSibling.remove();
-        detachedBoundary.remove();
-        nextAnchor.querySelector('i').remove();
-        nextAnchorWhitespace.remove();
-        noAnchor.remove();
-
-        options.callback();
-        options.callback();
-
-        expect(translated.textContent.trim()).toBe(
-            'GitHub Discussions are available. Yearly: $14.99, billed.'
-        );
-        expect(nextAnchor.textContent).toBe(' kept');
-    });
-
-    it('should restore line breaks between translated syntax-highlighted lines', () => {
-        globalThis.document.body.innerHTML = [
-            '<pre id="code-block"><span></span><span class="k">- [x]</span> This is a complete item\n',
-            '<span class="k">- [ ]</span> This is an incomplete item\n</pre>',
-        ].join('');
-
-        initCrowdIn();
-        jest.runAllTimers();
-
-        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
-        const codeBlock = globalThis.document.getElementById('code-block');
-        const firstLineText = codeBlock.querySelector('.k').nextSibling;
-
-        firstLineText.data = firstLineText.data.trim();
-        options.callback();
-
-        expect(codeBlock.textContent).toBe(
-            '- [x] This is a complete item\n- [ ] This is an incomplete item\n'
-        );
-    });
-
-    it('should restore whitespace after later asynchronous DOM changes', async () => {
-        globalThis.document.body.innerHTML = '<p id="translated">Use <a href="#">this link</a> here.</p>';
-
-        initCrowdIn();
-        jest.runAllTimers();
-
-        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
-        const translated = globalThis.document.getElementById('translated');
-        const link = translated.querySelector('a');
-
-        options.callback();
-        link.previousSibling.data = link.previousSibling.data.trimEnd();
-        await Promise.resolve();
-
-        expect(translated.textContent).toBe('Use this link here.');
-
-        jest.advanceTimersByTime(1000);
-        link.nextSibling.data = link.nextSibling.data.trimStart();
-        await Promise.resolve();
-
-        expect(translated.textContent).toBe('Use this link here.');
-    });
-
-    it('should not fight another observer over translated whitespace', async () => {
-        globalThis.document.body.innerHTML = '<p>Use <a href="#">this link</a> here.</p>';
-
-        initCrowdIn();
-        jest.runAllTimers();
-
-        const options = globalThis.proxyTranslator.init.mock.calls[0][0];
-        const text = document.querySelector('a').previousSibling;
-        options.callback();
-
-        let rewrites = 0;
-        const translatorObserver = new MutationObserver(() => {
-            if (text.data.endsWith(' ') && rewrites < 10) {
-                rewrites++;
-                text.data = text.data.trimEnd();
-            }
+    it('should install whitespace preservation before Crowdin initializes', () => {
+        globalThis.proxyTranslator.init.mockImplementation(() => {
+            expect(globalThis.i18nextify.i18next.use).toHaveBeenCalledWith(expect.objectContaining({
+                type: 'postProcessor',
+                name: 'crowdin-preserve-whitespace',
+                process: expect.any(Function),
+            }));
         });
-        translatorObserver.observe(document.body, { characterData: true, subtree: true });
 
-        text.data = text.data.trimEnd();
-        for (let i = 0; i < 10; i++) await Promise.resolve();
-        translatorObserver.disconnect();
+        initCrowdIn();
+        jest.runAllTimers();
+    });
 
-        expect(rewrites).toBe(1);
+    it.each([
+        ['wrapped text before a link', 'Until a repository transfers, keep using\nits location in the ',
+            'Until a repository transfers, keep using\nits location in the',
+            'Until a repository transfers, keep using\nits location in the '],
+        ['wrapped text after code', ' are planned to become forwarding pages\nthat guide visitors.',
+            'are planned to become forwarding pages\nthat guide visitors.',
+            ' are planned to become forwarding pages\nthat guide visitors.'],
+        ['wrapped text between links', ', and\n', ', and', ', and\n'],
+        ['translated text', ' Read the\nproject notes ', ' Projektberichte lesen ', ' Projektberichte lesen '],
+        ['nonbreaking whitespace', '\u00a0Read the\nnotes\t', 'Hinweise lesen', '\u00a0Hinweise lesen\t'],
+        ['unspaced punctuation', '.', '.', '.'],
+        ['unspaced text', 'Notes', 'Hinweise', 'Hinweise'],
+        ['whitespace only', ' \n', '', ' \n'],
+    ])('should preserve source boundaries for %s', (label, source, translation, expected) => {
+        initCrowdIn();
+        jest.runAllTimers();
+
+        const processor = globalThis.i18nextify.i18next.use.mock.calls[0][0];
+        expect(processor.process(translation, [source.trim()], { defaultValue: source })).toBe(expected);
+    });
+
+    it.each([
+        [undefined, {}],
+        ['Text', undefined],
+        [null, { defaultValue: ' Text ' }],
+        [42, { defaultValue: ' Text ' }],
+        ['Text', {}],
+        ['Text', { defaultValue: null }],
+    ])('should leave non-text translations or missing source text unchanged (%j, %j)', (value, options) => {
+        initCrowdIn();
+        jest.runAllTimers();
+
+        const processor = globalThis.i18nextify.i18next.use.mock.calls[0][0];
+        expect(processor.process(value, ['key'], options)).toBe(value);
+    });
+
+    it.each([
+        [{}, ['crowdin-preserve-whitespace']],
+        [{ postProcess: 'existing' }, ['existing', 'crowdin-preserve-whitespace']],
+        [{ postProcess: ['first', 'second'] }, ['first', 'second', 'crowdin-preserve-whitespace']],
+    ])('should append whitespace processing to renderer options %j', (options, expected) => {
+        const renderer = globalThis.i18nextify;
+        const originalInit = renderer.init;
+        const result = { start: jest.fn() };
+        const callback = jest.fn();
+        originalInit.mockReturnValue(result);
+        const originalOptions = { ...options, lng: 'de' };
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        expect(renderer.init(originalOptions, callback)).toBe(result);
+        expect(originalInit).toHaveBeenCalledWith({ ...originalOptions, postProcess: expected }, callback);
+        expect(originalInit.mock.contexts[0]).toBe(renderer);
+        expect(originalOptions).toEqual({ ...options, lng: 'de' });
+    });
+
+    it.each([
+        ['fallback text', ', and\n', ', and', ', and\n'],
+        ['instant translation', ' Read the\nnotes ', ' Hinweise lesen ', ' Hinweise lesen '],
+    ])('should preserve %s returned after missing-key postprocessing', (label, source, value, expected) => {
+        const renderer = globalThis.i18nextify;
+        const originalInit = renderer.init;
+        const originalHandler = jest.fn().mockReturnValue(value);
+        const options = { parseMissingKeyHandler: originalHandler };
+        const translationOptions = { defaultValue: source };
+
+        initCrowdIn();
+        jest.runAllTimers();
+        renderer.init(options);
+        const wrappedOptions = originalInit.mock.calls[0][0];
+
+        expect(wrappedOptions.parseMissingKeyHandler(source.trim(), source, translationOptions)).toBe(expected);
+        expect(originalHandler).toHaveBeenCalledWith(source.trim(), source, translationOptions);
+        expect(originalHandler.mock.contexts[0]).toBe(wrappedOptions);
+        expect(options.parseMissingKeyHandler).toBe(originalHandler);
+    });
+
+    it('should avoid the whitespace observer loop that froze Doxygen pages', async () => {
+        document.body.innerHTML = '<div class="fragment"><span>code</span> example\n</div>';
+        const observer = jest.spyOn(globalThis, 'MutationObserver');
+
+        try {
+            initCrowdIn('LizardByte-docs', 'dockle');
+            jest.advanceTimersByTime(0);
+            const html = document.body.innerHTML;
+            const processor = globalThis.i18nextify.i18next.use.mock.calls[0][0];
+
+            for (let i = 0; i < 10; i++) {
+                expect(processor.process('Translated', ['Text'], { defaultValue: ' Text\n' })).toBe(' Translated\n');
+                await Promise.resolve();
+            }
+            jest.advanceTimersByTime(5000);
+
+            expect(observer).not.toHaveBeenCalled();
+            expect(document.body.innerHTML).toBe(html);
+            expect(jest.getTimerCount()).toBe(0);
+        } finally {
+            observer.mockRestore();
+        }
+    });
+
+    it('should configure each Crowdin renderer only once', () => {
+        initCrowdIn();
+        jest.runAllTimers();
+        const wrappedInit = globalThis.i18nextify.init;
+
+        initCrowdIn();
+        jest.runAllTimers();
+
+        expect(globalThis.i18nextify.i18next.use).toHaveBeenCalledTimes(1);
+        expect(globalThis.i18nextify.init).toBe(wrappedInit);
     });
 
     it('should initialize proxyTranslator with LizardByte-docs settings', () => {
@@ -364,6 +386,10 @@ describe('Crowdin fetch interceptor', () => {
 
         // Minimal DOM + proxyTranslator stub so initCrowdIn callback doesn't crash
         globalThis.window.proxyTranslator = { init: jest.fn() };
+        globalThis.i18nextify = {
+            i18next: { use: jest.fn() },
+            init: jest.fn(),
+        };
         globalThis.document.body.innerHTML = '';
 
         jest.useFakeTimers();
@@ -374,6 +400,7 @@ describe('Crowdin fetch interceptor', () => {
         jest.useRealTimers();
         delete globalThis._crowdinMirrorInstalled;
         delete globalThis.window.proxyTranslator;
+        delete globalThis.i18nextify;
     });
 
     it('should redirect Crowdin CDN fetch calls to the GitHub Pages mirror', async () => {

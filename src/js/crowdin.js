@@ -12,198 +12,71 @@ const CROWDIN_DIST_MIRROR = 'https://cdn.jsdelivr.net/gh/LizardByte/i18n@dist';
 const CROWDIN_CODE_BLOCK_CLASS = 'crowdin-ignore-code';
 const CROWDIN_PLATFORM_STYLING_MAX_ATTEMPTS = 100;
 const CROWDIN_PLATFORM_STYLING_RETRY_DELAY_MS = 50;
-const CROWDIN_INLINE_ELEMENT_SELECTOR = [
-    'a',
-    'abbr',
-    'b',
-    'cite',
-    'code',
-    'del',
-    'em',
-    'i',
-    'ins',
-    'kbd',
-    'mark',
-    'q',
-    's',
-    'samp',
-    'small',
-    'span',
-    'strong',
-    'sub',
-    'sup',
-    'time',
-    'u',
-    'var',
-].join(',');
+const CROWDIN_WHITESPACE_POST_PROCESSOR = 'crowdin-preserve-whitespace';
+const CROWDIN_WHITESPACE_RENDERERS = new WeakSet();
 
 /**
- * Returns a sibling when it is an inline element whose boundary Crowdin may rewrite.
- * @param {Node|null} sibling Candidate sibling.
- * @returns {Element|null} Matching inline element.
+ * Preserves source whitespace in translation results before i18nextify records
+ * or renders them. Its cleanWhitespace handling only recognizes single-line
+ * text; multiline missing keys and translations can lose their boundary spaces.
+ * @param {*} value Translated value.
+ * @param {string|string[]} key Translation lookup keys.
+ * @param {Object} options Translation options, including the source defaultValue.
+ * @returns {*} Translation with the source's exact boundary whitespace.
  */
-function _getCrowdinInlineSibling(sibling) {
-    if (!(sibling instanceof globalThis.Element)) return null;
-    return sibling.matches(CROWDIN_INLINE_ELEMENT_SELECTOR) ? sibling : null;
+function _preserveCrowdinWhitespace(value, key, options) {
+    const source = options?.defaultValue;
+    if (typeof value !== 'string' || typeof source !== 'string') return value;
+    if (source.trim() === '') return source;
+
+    const leadingWhitespace = source.slice(0, source.length - source.trimStart().length);
+    const trailingWhitespace = source.slice(source.trimEnd().length);
+    return leadingWhitespace + value.trim() + trailingWhitespace;
 }
 
 /**
- * Returns the exact whitespace at the start of a string.
- * @param {string} text Text to inspect.
- * @returns {string} Leading whitespace.
+ * Adds a postprocessor to Crowdin's renderer before its initial translation.
+ * Keeping i18nextify's cached translation and DOM text identical avoids the
+ * mutation-observer loop caused by repairing whitespace after rendering.
  */
-function _getLeadingWhitespace(text) {
-    const trimmedText = text.trimStart();
-    return text.slice(0, text.length - trimmedText.length);
-}
+function _installCrowdinWhitespacePreserver() {
+    const renderer = globalThis.i18nextify;
+    if (CROWDIN_WHITESPACE_RENDERERS.has(renderer)) return;
 
-/**
- * Returns the exact whitespace at the end of a string.
- * @param {string} text Text to inspect.
- * @returns {string} Trailing whitespace.
- */
-function _getTrailingWhitespace(text) {
-    const trimmedText = text.trimEnd();
-    return text.slice(trimmedText.length);
-}
-
-/**
- * Records whitespace that separates text from inline elements before Crowdin translates the page.
- * @returns {Array<{
- *     node: Text,
- *     leading: boolean,
- *     leadingWhitespace: string,
- *     trailing: boolean,
- *     trailingWhitespace: string,
- *     previousInline: Element|null,
- *     nextInline: Element|null,
- *     whitespaceOnly: boolean,
- *     lastRestoredNode: Text|null,
- *     lastRestoredFrom: string|null
- * }>} Recorded text-node boundaries.
- */
-function _captureCrowdinWhitespaceBoundaries() {
-    const boundaries = [];
-    const walker = document.createTreeWalker(document.body, globalThis.NodeFilter.SHOW_TEXT);
-    let node = walker.nextNode();
-
-    while (node !== null) {
-        const previousInline = _getCrowdinInlineSibling(node.previousSibling);
-        const nextInline = _getCrowdinInlineSibling(node.nextSibling);
-        const leadingWhitespace = previousInline === null ? '' : _getLeadingWhitespace(node.data);
-        const trailingWhitespace = nextInline === null ? '' : _getTrailingWhitespace(node.data);
-        const leading = leadingWhitespace !== '';
-        const trailing = trailingWhitespace !== '';
-
-        if (leading || trailing) {
-            boundaries.push({
-                node,
-                leading,
-                leadingWhitespace,
-                trailing,
-                trailingWhitespace,
-                previousInline,
-                nextInline,
-                whitespaceOnly: node.data.trim() === '',
-                lastRestoredNode: null,
-                lastRestoredFrom: null,
-            });
-        }
-
-        node = walker.nextNode();
-    }
-
-    return boundaries;
-}
-
-/**
- * Finds the current text node for a boundary after Crowdin changes the DOM.
- * @param {Object} boundary Recorded whitespace boundary.
- * @returns {Text|null} Current or recreated text node.
- */
-function _resolveCrowdinWhitespaceNode(boundary) {
-    if (boundary.node.isConnected) return boundary.node;
-
-    const previousReplacement = boundary.previousInline?.nextSibling;
-    if (previousReplacement instanceof globalThis.Text && previousReplacement.isConnected) {
-        boundary.node = previousReplacement;
-        return boundary.node;
-    }
-    const nextReplacement = boundary.nextInline?.previousSibling;
-    if (nextReplacement instanceof globalThis.Text && nextReplacement.isConnected) {
-        boundary.node = nextReplacement;
-        return boundary.node;
-    }
-    if (!boundary.whitespaceOnly) return null;
-
-    const replacement = document.createTextNode('');
-    if (boundary.previousInline?.isConnected) {
-        boundary.previousInline.after(replacement);
-    } else if (boundary.nextInline?.isConnected) {
-        boundary.nextInline.before(replacement);
-    } else {
-        return null;
-    }
-
-    boundary.node = replacement;
-    return boundary.node;
-}
-
-/**
- * Restores whitespace that Crowdin removed from translated text-node boundaries.
- * @param {Array<Object>} boundaries Recorded text-node boundaries.
- */
-function _restoreCrowdinWhitespaceBoundaries(boundaries) {
-    boundaries.forEach((boundary) => {
-        const node = _resolveCrowdinWhitespaceNode(boundary);
-        if (node === null) return;
-        if (boundary.lastRestoredNode === node && boundary.lastRestoredFrom === node.data) return;
-
-        const originalText = node.data;
-
-        const currentLeadingWhitespace = _getLeadingWhitespace(node.data);
-        if (boundary.leading && currentLeadingWhitespace !== boundary.leadingWhitespace) {
-            node.data = boundary.leadingWhitespace + node.data.slice(currentLeadingWhitespace.length);
-        }
-        const currentTrailingWhitespace = _getTrailingWhitespace(node.data);
-        if (boundary.trailing && currentTrailingWhitespace !== boundary.trailingWhitespace) {
-            const translatedTextEnd = node.data.length - currentTrailingWhitespace.length;
-            node.data = node.data.slice(0, translatedTextEnd) + boundary.trailingWhitespace;
-        }
-        if (node.data !== originalText) {
-            // A translator may observe this correction and remove the same
-            // whitespace again. Do not repeat the correction indefinitely.
-            boundary.lastRestoredNode = node;
-            boundary.lastRestoredFrom = originalText;
-        }
+    renderer.i18next.use({
+        type: 'postProcessor',
+        name: CROWDIN_WHITESPACE_POST_PROCESSOR,
+        process: _preserveCrowdinWhitespace,
     });
-}
 
-/**
- * Creates the Website Translator callback and observes later translation mutations.
- * @param {Array<Object>} boundaries Recorded text-node boundaries.
- * @returns {Function} Website Translator callback.
- */
-function _createCrowdinTranslationCallback(boundaries) {
-    const translationObserver = new globalThis.MutationObserver(restoreAndObserve);
-
-    function restoreAndObserve() {
-        translationObserver.disconnect();
-        _restoreCrowdinWhitespaceBoundaries(boundaries);
-        translationObserver.observe(document.body, {
-            characterData: true,
-            childList: true,
-            subtree: true,
-        });
-    }
-
-    return restoreAndObserve;
+    const originalInit = renderer.init;
+    renderer.init = function(options, ...args) {
+        const postProcess = options.postProcess ?? [];
+        const rendererOptions = {
+            ...options,
+            postProcess: [
+                ...(Array.isArray(postProcess) ? postProcess : [postProcess]),
+                CROWDIN_WHITESPACE_POST_PROCESSOR,
+            ],
+        };
+        // i18next calls this handler after postprocessing a missing key, so
+        // preserve the boundaries of fallback and instant translations too.
+        if (typeof options.parseMissingKeyHandler === 'function') {
+            const originalHandler = options.parseMissingKeyHandler;
+            rendererOptions.parseMissingKeyHandler = function(key, defaultValue, translationOptions) {
+                const value = originalHandler.call(this, key, defaultValue, translationOptions);
+                return _preserveCrowdinWhitespace(value, key, translationOptions);
+            };
+        }
+        return originalInit.call(this, rendererOptions, ...args);
+    };
+    CROWDIN_WHITESPACE_RENDERERS.add(renderer);
 }
 
 /**
  * Keeps preformatted examples out of Crowdin's text-node rewriting. Syntax
- * highlighters can replace their children after translation starts, leaving
- * the whitespace boundary snapshots pointing at detached nodes.
+ * highlighters can replace their children after translation starts. Leave their
+ * markup and whitespace under the highlighter's control.
  */
 function _excludeCrowdinCodeBlocks() {
     document.querySelectorAll('pre, .fragment').forEach((block) => {
@@ -356,11 +229,10 @@ function initCrowdIn(project = 'LizardByte', platform = 'jekyll') {
 
         // Initialize Crowdin translator
         _excludeCrowdinCodeBlocks();
-        const whitespaceBoundaries = _captureCrowdinWhitespaceBoundaries();
+        _installCrowdinWhitespacePreserver();
 
         globalThis.proxyTranslator.init({
             baseUrl: currentBaseUrl,
-            callback: _createCrowdinTranslationCallback(whitespaceBoundaries),
             crawlerIgnoreClasses: [CROWDIN_CODE_BLOCK_CLASS],
             distribution: projectSettings[project].distribution,
             defaultLanguage: "en",
