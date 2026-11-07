@@ -66,6 +66,18 @@ icon filenames that contain spaces or other reserved characters.
    npm install @lizardbyte/shared-web --ignore-scripts
    ```
 
+## CrowdIn whitespace preservation
+
+The shared initializer preserves the source text's leading and trailing whitespace
+inside the translation pipeline, including missing-key fallbacks and instant
+translations. This covers multiline text around links, emphasis, and inline code.
+It does not install a whitespace repair observer: the renderer caches and displays
+the same result, avoiding the observer loop that could freeze documentation pages.
+
+Crowdin still loads after the page finishes loading. Preformatted code and Doxygen
+`.fragment` blocks remain excluded from translation so syntax highlighters can
+update them without losing their formatting.
+
 ## CrowdIn in JSDoc
 
 Create an initializer such as `docs/crowdin-init.js`:
