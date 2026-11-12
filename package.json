@@ -20,7 +20,7 @@
     "README.md"
   ],
   "dependencies": {
-    "bootstrap": "5.3.8"
+    "bootstrap": "5.3.9"
   },
   "devDependencies": {
     "@babel/core": "8.1.0",
